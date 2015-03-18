@@ -6,6 +6,8 @@
 #include <utility>
 #include <cstdint>
 
+#include "lms/imaging/format.h"
+
 namespace lms {
 namespace imaging {
 
@@ -26,8 +28,7 @@ public:
     /**
      * @brief Create an image of size zero.
      */
-    constexpr DynamicImage() : m_width(0), m_height(0), m_bpp(0), m_size(0) {
-    }
+    constexpr DynamicImage();
 
     /**
      * @brief Create a new dynamic image with the given width and height.
@@ -37,18 +38,16 @@ public:
      * @param width width of the image (x-direction)
      * @param height height of the image (y-direction)
      */
-    DynamicImage(int width, int height, int bpp) : m_width(width), m_height(height),
-        m_bpp(bpp), m_size(width * height * bpp), m_data(new std::uint8_t[m_size]) {
-    }
+    DynamicImage(int width, int height, Format fmt);
 
     /**
      * @brief Copy constructor
+     *
+     * NOTE: The capacity is not kept
+     *
      * @param DynamicImage object to copy
      */
-    DynamicImage(const DynamicImage &obj) : m_width(obj.m_width), m_height(obj.m_height),
-        m_bpp(obj.m_bpp), m_size(obj.m_size), m_data(new std::uint8_t[m_size]) {
-        std::copy(obj.m_data.get(), obj.m_data.get() + m_size, m_data.get());
-    }
+    DynamicImage(const DynamicImage &obj);
 
     /**
      * @brief Move constructor
@@ -58,18 +57,14 @@ public:
 
     /**
      * @brief Copy assignment operator
+     *
+     * NOTE: If the capacity of this image is sufficient
+     * the no new memory will be allocated.
+     *
      * @param rhs right side of the assignment
      * @return this
      */
-    DynamicImage& operator=(const DynamicImage &rhs) {
-        this->m_width = rhs.m_width;
-        this->m_height = rhs.m_height;
-        this->m_bpp = rhs.m_bpp;
-        this->m_size = rhs.m_size;
-        m_data.reset(new std::uint8_t[m_size]);
-        std::copy(rhs.m_data.get(), rhs.m_data.get() + m_size, m_data.get());
-        return *this;
-    }
+    DynamicImage& operator=(const DynamicImage &rhs);
 
     /**
      * @brief Move assignment operator
@@ -79,35 +74,6 @@ public:
     DynamicImage& operator=(DynamicImage &&rhs) = default;
 
     /**
-     * @brief Return a reference to the value at the given index.
-     *
-     * The image is stored row-by-row in an array.
-     *
-     * The index must be in the range [0, size).
-     *
-     * @param index index to look up
-     * @return reference to value at the given index
-     */
-    std::uint8_t& operator[] (int index) {
-        return m_data[index];
-    }
-
-
-    /**
-     * @brief Return a const reference to the value at the given index.
-     *
-     * The image is stored row-by-row in an array.
-     *
-     * The index must be in the range [0, size).
-     *
-     * @param index index to look up
-     * @return const reference to value at the given index
-     */
-    const std::uint8_t& operator[] (int index) const {
-        return m_data[index];
-    }
-
-    /**
      * @brief Resize the image to the new width and height.
      *
      * NOTE: This will discard all data that was in the image before.
@@ -115,49 +81,50 @@ public:
      * @param width new width of the image
      * @param height new height of the image
      */
-    void resize(int width, int height, int bpp) {
-        *this = DynamicImage(width, height, bpp);
-    }
+    void resize(int width, int height, Format fmt);
 
     /**
      * @brief Fill the dynamic image with the given value.
      * @param value
      */
-    void fill(std::uint8_t value) {
-        std::fill_n(m_data.get(), m_size, value);
-    }
+    void fill(std::uint8_t value);
+
+    /**
+     * @brief Trim the image to the needed size.
+     *
+     * Capacity and size will be equal afterwards.
+     */
+    void trim();
 
     /**
      * @brief Return the width of the image
      * @return width
      */
-    int width() const {
-        return m_width;
-    }
+    int width() const;
 
     /**
      * @brief Return the height of the image
      * @return height
      */
-    int height() const {
-        return m_height;
-    }
+    int height() const;
 
     /**
-     * @brief Return the bits per pixel setting.
-     * @return bits per pixel
+     * @brief Return the image format.
+     * @return image format
      */
-    int bpp() const {
-        return m_bpp;
-    }
+    Format format() const;
 
     /**
-     * @brief Return the size of the image, that is width * height.
+     * @brief Return the size of the image, that is width * height * bytesPerPixel.
      * @return size of the image
      */
-    int size() const {
-        return m_size;
-    }
+    int size() const;
+
+    /**
+     * @brief Return the capacity of the image in bytes.
+     * @return
+     */
+    int capacity() const;
 
     /**
      * @brief Return a raw data pointer
@@ -167,9 +134,7 @@ public:
      *
      * @return data pointer
      */
-    std::uint8_t* data() {
-        return m_data.get();
-    }
+    std::uint8_t* data();
 
     /**
      * @brief Return a const raw data pointer
@@ -179,15 +144,14 @@ public:
      *
      * @return data pointer
      */
-    std::uint8_t* data() const {
-        return m_data.get();
-    }
+    const std::uint8_t* data() const;
 
 private:
     int m_width;
     int m_height;
-    int m_bpp;
+    Format m_fmt;
     int m_size;
+    int m_capacity;
     std::unique_ptr<std::uint8_t[]> m_data;
 };
 

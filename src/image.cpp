@@ -38,8 +38,18 @@ Image& Image::operator=(const Image &rhs) {
 }
 
 void Image::resize(int width, int height, Format fmt) {
-    // using move assignment operator here
-    *this = Image(width, height, fmt);
+    int minBufSize = imageBufferSize(width, height, fmt);
+
+    // check if current capacity is sufficient
+    if(capacity() >= minBufSize) {
+        this->m_width = width;
+        this->m_height = height;
+        this->m_fmt = fmt;
+        this->m_size = minBufSize;
+    } else {
+        // using move assignment operator here
+        *this = Image(width, height, fmt);
+    }
 }
 
 void Image::fill(std::uint8_t value) {

@@ -11,6 +11,10 @@ bool convert(const Image &input, Image &output, Format targetFormat);
 
 void convertYUYVtoGREY(const Image &input, Image &output);
 
+void convertYUYVtoBGRA(const Image &input, Image &output);
+
+void convertGREYtoBGRA(const Image &input, Image &output);
+
 }  // namespace imaging
 }  // namespace lms
 

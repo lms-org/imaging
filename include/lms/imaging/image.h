@@ -28,7 +28,7 @@ public:
     /**
      * @brief Create an image of size zero.
      */
-    constexpr Image();
+    Image();
 
     /**
      * @brief Create a new dynamic image with the given width and height.

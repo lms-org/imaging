@@ -3,7 +3,7 @@
 namespace lms {
 namespace imaging {
 
-constexpr Image::Image() : m_width(0), m_height(0), m_fmt(Format::UNKNOWN),
+Image::Image() : m_width(0), m_height(0), m_fmt(Format::UNKNOWN),
     m_size(0), m_capacity(0) {
 }
 

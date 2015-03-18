@@ -2,12 +2,14 @@ set ( SOURCES
 	"src/image.cpp"
 	"src/static_image.cpp"
 	"src/format.cpp"
+	"src/converter.cpp"
 )
 
 set (HEADERS 
 	"include/lms/imaging/image.h"
 	"include/lms/imaging/static_image.h"
 	"include/lms/imaging/format.h"
+	"include/lms/imaging/converter.h"
 	${HEADERS_SHARED}
 )
 

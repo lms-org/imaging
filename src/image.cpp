@@ -1,25 +1,25 @@
-#include <lms/imaging/dynamic_image.h>
+#include <lms/imaging/image.h>
 
 namespace lms {
 namespace imaging {
 
-constexpr DynamicImage::DynamicImage() : m_width(0), m_height(0), m_fmt(Format::UNKNOWN),
+constexpr Image::Image() : m_width(0), m_height(0), m_fmt(Format::UNKNOWN),
     m_size(0), m_capacity(0) {
 }
 
-DynamicImage::DynamicImage(int width, int height, Format fmt) : m_width(width), m_height(height),
+Image::Image(int width, int height, Format fmt) : m_width(width), m_height(height),
     m_fmt(fmt), m_size(imageBufferSize(width, height, fmt)), m_capacity(m_size),
     m_data(new std::uint8_t[m_size]) {
 }
 
-DynamicImage::DynamicImage(const DynamicImage &obj) : m_width(obj.m_width), m_height(obj.m_height),
+Image::Image(const Image &obj) : m_width(obj.m_width), m_height(obj.m_height),
     m_fmt(obj.m_fmt), m_size(obj.m_size), m_capacity(obj.m_size),
     m_data(new std::uint8_t[m_size]) {
 
     std::copy(obj.m_data.get(), obj.m_data.get() + m_size, m_data.get());
 }
 
-DynamicImage& DynamicImage::operator=(const DynamicImage &rhs) {
+Image& Image::operator=(const Image &rhs) {
     this->m_width = rhs.m_width;
     this->m_height = rhs.m_height;
     this->m_fmt = rhs.m_fmt;
@@ -37,16 +37,16 @@ DynamicImage& DynamicImage::operator=(const DynamicImage &rhs) {
     return *this;
 }
 
-void DynamicImage::resize(int width, int height, Format fmt) {
+void Image::resize(int width, int height, Format fmt) {
     // using move assignment operator here
-    *this = DynamicImage(width, height, fmt);
+    *this = Image(width, height, fmt);
 }
 
-void DynamicImage::fill(std::uint8_t value) {
+void Image::fill(std::uint8_t value) {
     std::fill_n(m_data.get(), m_size, value);
 }
 
-void DynamicImage::trim() {
+void Image::trim() {
     if(m_size != m_capacity) {
         std::uint8_t *newMem = new std::uint8_t[m_size];
         std::copy(m_data.get(), m_data.get() + m_size, newMem);
@@ -56,31 +56,31 @@ void DynamicImage::trim() {
     }
 }
 
-int DynamicImage::width() const {
+int Image::width() const {
     return m_width;
 }
 
-int DynamicImage::height() const {
+int Image::height() const {
     return m_height;
 }
 
-Format DynamicImage::format() const {
+Format Image::format() const {
     return m_fmt;
 }
 
-int DynamicImage::size() const {
+int Image::size() const {
     return m_size;
 }
 
-int DynamicImage::capacity() const {
+int Image::capacity() const {
     return m_capacity;
 }
 
-std::uint8_t* DynamicImage::data() {
+std::uint8_t* Image::data() {
     return m_data.get();
 }
 
-const std::uint8_t* DynamicImage::data() const {
+const std::uint8_t* Image::data() const {
     return m_data.get();
 }
 

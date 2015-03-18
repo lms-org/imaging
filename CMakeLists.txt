@@ -1,11 +1,11 @@
 set ( SOURCES 
-	"src/dynamic_image.cpp"
+	"src/image.cpp"
 	"src/static_image.cpp"
 	"src/format.cpp"
 )
 
 set (HEADERS 
-	"include/lms/imaging/dynamic_image.h"
+	"include/lms/imaging/image.h"
 	"include/lms/imaging/static_image.h"
 	"include/lms/imaging/format.h"
 	${HEADERS_SHARED}

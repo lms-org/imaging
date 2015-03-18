@@ -12,7 +12,7 @@ namespace lms {
 namespace imaging {
 
 /**
- * @brief DynamicImage serves as a data channel type, as an replacement
+ * @brief Image serves as a data channel type, as an replacement
  * for char* with size parameter.
  *
  * A dynamic image is a two dimensional array where the type is already
@@ -23,12 +23,12 @@ namespace imaging {
  *
  * @author Hans Kirchner
  */
-class DynamicImage {
+class Image {
 public:
     /**
      * @brief Create an image of size zero.
      */
-    constexpr DynamicImage();
+    constexpr Image();
 
     /**
      * @brief Create a new dynamic image with the given width and height.
@@ -38,22 +38,22 @@ public:
      * @param width width of the image (x-direction)
      * @param height height of the image (y-direction)
      */
-    DynamicImage(int width, int height, Format fmt);
+    Image(int width, int height, Format fmt);
 
     /**
      * @brief Copy constructor
      *
      * NOTE: The capacity is not kept
      *
-     * @param DynamicImage object to copy
+     * @param Image object to copy
      */
-    DynamicImage(const DynamicImage &obj);
+    Image(const Image &obj);
 
     /**
      * @brief Move constructor
      * @param object to move
      */
-    DynamicImage(DynamicImage &&obj) = default;
+    Image(Image &&obj) = default;
 
     /**
      * @brief Copy assignment operator
@@ -64,14 +64,14 @@ public:
      * @param rhs right side of the assignment
      * @return this
      */
-    DynamicImage& operator=(const DynamicImage &rhs);
+    Image& operator=(const Image &rhs);
 
     /**
      * @brief Move assignment operator
      * @param rhs right side of the assignment
      * @return this
      */
-    DynamicImage& operator=(DynamicImage &&rhs) = default;
+    Image& operator=(Image &&rhs) = default;
 
     /**
      * @brief Resize the image to the new width and height.

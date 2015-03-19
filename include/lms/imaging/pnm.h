@@ -15,6 +15,8 @@ namespace imaging {
  */
 bool savePGM(const Image &image, const std::string &path);
 
+bool readPGM(Image &image, const std::string &path);
+
 }  // namespace imaging
 }  // namespace lms
 

@@ -9,11 +9,14 @@ namespace imaging {
 
 bool convert(const Image &input, Image &output, Format targetFormat);
 
-void convertYUYVtoGREY(const Image &input, Image &output);
+bool convertRaw(Format srcFormat, const std::uint8_t *src, int srcSize,
+                Format dstFormat, std::uint8_t *dst);
 
-void convertYUYVtoBGRA(const Image &input, Image &output);
+void convertYUYVtoGREY(const std::uint8_t *src, int srcSize, std::uint8_t *dst);
 
-void convertGREYtoBGRA(const Image &input, Image &output);
+void convertYUYVtoBGRA(const std::uint8_t *src, int srcSize, std::uint8_t *dst);
+
+void convertGREYtoBGRA(const std::uint8_t *src, int srcSize, std::uint8_t *dst);
 
 }  // namespace imaging
 }  // namespace lms

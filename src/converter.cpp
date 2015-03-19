@@ -4,30 +4,34 @@ namespace lms {
 namespace imaging {
 
 bool convert(const Image &input, Image &output, Format targetFormat) {
-    if(input.format() == Format::YUYV && targetFormat == Format::GREY) {
-        convertYUYVtoGREY(input, output);
-        return true;
-    }
-    if(input.format() == Format::YUYV && targetFormat == Format::BGRA) {
-        convertYUYVtoBGRA(input, output);
-        return true;
-    }
-    if(input.format() == Format::GREY && targetFormat == Format::BGRA) {
-        convertGREYtoBGRA(input, output);
-        return true;
-    }
+    output.resize(input.width(), input.height(), targetFormat);
 
+    return convertRaw(input.format(), input.data(), input.size(),
+               targetFormat, output.data());
+}
+
+bool convertRaw(Format srcFormat, const std::uint8_t *src, int srcSize,
+                Format dstFormat, std::uint8_t *dst) {
+
+    if(srcFormat == Format::YUYV && dstFormat == Format::GREY) {
+        convertYUYVtoGREY(src, srcSize, dst);
+        return true;
+    }
+    if(srcFormat == Format::YUYV && dstFormat == Format::BGRA) {
+        convertYUYVtoBGRA(src, srcSize, dst);
+        return true;
+    }
+    if(srcFormat == Format::GREY && dstFormat == Format::BGRA) {
+        convertGREYtoBGRA(src, srcSize, dst);
+        return true;
+    }
     return false;
 }
 
-void convertYUYVtoGREY(const Image &input, Image &output) {
-    output.resize(input.width(), input.height(), Format::GREY);
-
-    // Only for sizes dividable by 4
-    size_t i = output.size() / 4;
-    const std::uint8_t* src = input.data();
-    std::uint8_t* dst = output.data();
-    while( i-- ) {
+void convertYUYVtoGREY(const std::uint8_t *src, int srcSize, std::uint8_t *dst) {
+    // Only for sizes dividable by 8
+    int i = srcSize / 8;
+    while(i--) {
         *dst++ = *src; src += 2;
         *dst++ = *src; src += 2;
         *dst++ = *src; src += 2;
@@ -35,12 +39,13 @@ void convertYUYVtoGREY(const Image &input, Image &output) {
     }
 
     // do the rest
-    i = output.size() % 4;
-    while( i-- ) {
+    i = srcSize % 8;
+    while(i--) {
         *dst++ = *src; src += 2;
     }
 }
 
+// helper function for YUYV -> BGRA conversion
 void yuv2rgb(int y, int u, int v, std::uint8_t *r, std::uint8_t *g, std::uint8_t *b) {
     int r1, g1, b1;
     int c = y - 16, d = u - 128, e = v - 128;
@@ -61,13 +66,8 @@ void yuv2rgb(int y, int u, int v, std::uint8_t *r, std::uint8_t *g, std::uint8_t
     *b = b1;
 }
 
-void convertYUYVtoBGRA(const Image &input, Image &output) {
-    output.resize(input.width(), input.height(), Format::BGRA);
-
-    size_t i = input.size() / 4;
-    const std::uint8_t *src = input.data();
-    std::uint8_t *dst = output.data();
-
+void convertYUYVtoBGRA(const std::uint8_t *src, int srcSize, std::uint8_t *dst) {
+    int i = srcSize / 4;
     int y, u, y2, v;
 
     while(i--) {
@@ -88,12 +88,8 @@ void convertYUYVtoBGRA(const Image &input, Image &output) {
     }
 }
 
-void convertGREYtoBGRA(const Image &input, Image &output) {
-    output.resize(input.width(), input.height(), Format::BGRA);
-
-    size_t i = input.size();
-    const std::uint8_t *src = input.data();
-    std::uint8_t *dst = output.data();
+void convertGREYtoBGRA(const std::uint8_t *src, int srcSize, std::uint8_t *dst) {
+    size_t i = srcSize;
 
     while(i--) {
         *dst++ = *src;  // B

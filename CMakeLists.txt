@@ -3,6 +3,7 @@ set ( SOURCES
 	"src/static_image.cpp"
 	"src/format.cpp"
 	"src/converter.cpp"
+	"src/pnm.cpp"
 )
 
 set (HEADERS 
@@ -10,6 +11,7 @@ set (HEADERS
 	"include/lms/imaging/static_image.h"
 	"include/lms/imaging/format.h"
 	"include/lms/imaging/converter.h"
+	"include/lms/imaging/pnm.h"
 	${HEADERS_SHARED}
 )
 

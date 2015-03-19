@@ -45,7 +45,16 @@ void convertYUYVtoGREY(const std::uint8_t *src, int srcSize, std::uint8_t *dst) 
     }
 }
 
-// helper function for YUYV -> BGRA conversion
+/*
+ * Helper function for YUYV -> BGRA conversion.
+ *
+ * Found on:
+ * https://social.msdn.microsoft.com/Forums/windowsdesktop/en-US/1071301e-74a2-4de4-be72-81c34604cde9/program-to-translate-yuyv-to-rgbrgb?forum=windowsdirectshowdevelopment
+ *
+ * The alternatives use slow floating point operations:
+ * - http://pastebin.com/mDcwqJV3
+ * - http://stackoverflow.com/questions/9098881/convert-from-yuv-to-rgb-in-c-android-ndk
+ */
 void yuv2rgb(int y, int u, int v, std::uint8_t *r, std::uint8_t *g, std::uint8_t *b) {
     int r1, g1, b1;
     int c = y - 16, d = u - 128, e = v - 128;

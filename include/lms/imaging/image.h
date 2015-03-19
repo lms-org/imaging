@@ -1,5 +1,5 @@
-#ifndef LMS_IMAGING_DYNAMIC_IMAGE_H
-#define LMS_IMAGING_DYNAMIC_IMAGE_H
+#ifndef LMS_IMAGING_IMAGE_H
+#define LMS_IMAGING_IMAGE_H
 
 #include <memory>
 #include <algorithm>
@@ -158,4 +158,4 @@ private:
 } // namespace imaging
 } // namespace lms
 
-#endif /* LMS_IMAGING_DYNAMIC_IMAGE_H */
+#endif /* LMS_IMAGING_IMAGE_H */

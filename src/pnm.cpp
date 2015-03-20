@@ -15,10 +15,15 @@ bool savePGM(const Image &image, const std::string &path) {
         return false;
     }
 
-    FILE* file = fopen(path.c_str(), "w");
-    fprintf(file, "P5\n%i %i %i\n", image.width(), image.height(), 255);
-    fwrite(image.data(), image.size(), 1, file);
-    fclose(file);
+    std::ofstream of(path, std::ios::binary);
+    of << "P5\n" << image.width() << " " << image.height() << " " << 255 << "\n";
+
+    std::copy(
+            reinterpret_cast<const char*>(image.data()),
+            reinterpret_cast<const char*>(image.data() + image.size()),
+            std::ostreambuf_iterator<char>(of));
+
+    of.close();
 
     return true;
 }

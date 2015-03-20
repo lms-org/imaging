@@ -41,8 +41,10 @@ bool readPGM(Image &image, const std::string &path) {
 
     image.resize(width, height, lms::imaging::Format::GREY);
 
-    // TODO maybe skip the first byte, dont know yet
+    // skip one byte (is will be a whitespace character)
+    is.ignore(1);
 
+    // read data from ifstream into buffer
     std::copy(
             std::istreambuf_iterator<char>(is),
             std::istreambuf_iterator<char>( ),

@@ -15,3 +15,6 @@ Converting image formats:
 
 TODO:
 - Bitmaps (*.bmp)
+
+## Dependencies
+- [cereal](https://github.com/syxolk/cereal)

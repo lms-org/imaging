@@ -7,6 +7,7 @@
 #include <cstdint>
 
 #include "lms/imaging/format.h"
+#include "cereal/cereal.hpp"
 
 namespace lms {
 namespace imaging {
@@ -145,6 +146,20 @@ public:
      * @return data pointer
      */
     const std::uint8_t* data() const;
+
+    template<class Archive>
+    void save(Archive & archive) const {
+        archive( m_width, m_height, m_fmt, m_size,
+                 cereal::binary_data(m_data.get(), m_size * sizeof(std::uint8_t)));
+    }
+
+    template<class Archive>
+    void load(Archive & archive) {
+        archive( m_width, m_height, m_fmt, m_size );
+        m_data.reset(new std::uint8_t[m_size]);
+        archive(cereal::binary_data(m_data.get(), m_size * sizeof(std::uint8_t)));
+        m_capacity = m_size;
+    }
 
 private:
     int m_width;

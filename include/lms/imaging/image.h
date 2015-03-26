@@ -9,6 +9,7 @@
 #include "lms/imaging/format.h"
 
 #ifdef USE_CEREAL
+#include "lms/serializable.h"
 #include "cereal/cerealizable.h"
 #include "cereal/cereal.hpp"
 #endif
@@ -30,7 +31,7 @@ namespace imaging {
  */
 class Image
 #ifdef USE_CEREAL
-    : public cereal::PortableBinaryCerealizable
+    : public lms::Serializable
 #endif
 {
 public:
@@ -156,6 +157,8 @@ public:
     const std::uint8_t* data() const;
 
 #ifdef USE_CEREAL
+    CEREAL_SERIALIZATION();
+
     template<class Archive>
     void save(Archive & archive) const {
         archive( m_width, m_height, m_fmt, m_size,

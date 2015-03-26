@@ -7,7 +7,11 @@
 #include <cstdint>
 
 #include "lms/imaging/format.h"
+
+#ifdef USE_CEREAL
+#include "cereal/cerealizable.h"
 #include "cereal/cereal.hpp"
+#endif
 
 namespace lms {
 namespace imaging {
@@ -24,7 +28,11 @@ namespace imaging {
  *
  * @author Hans Kirchner
  */
-class Image {
+class Image
+#ifdef USE_CEREAL
+    : public cereal::PortableBinaryCerealizable
+#endif
+{
 public:
     /**
      * @brief Create an image of size zero.
@@ -147,6 +155,7 @@ public:
      */
     const std::uint8_t* data() const;
 
+#ifdef USE_CEREAL
     template<class Archive>
     void save(Archive & archive) const {
         archive( m_width, m_height, m_fmt, m_size,
@@ -160,6 +169,7 @@ public:
         archive(cereal::binary_data(m_data.get(), m_size * sizeof(std::uint8_t)));
         m_capacity = m_size;
     }
+#endif
 
 private:
     int m_width;

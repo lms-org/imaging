@@ -156,9 +156,12 @@ public:
      */
     const std::uint8_t* data() const;
 
+//implement cereal
 #ifdef USE_CEREAL
-    CEREAL_SERIALIZATION();
+    //get default interface for datamanager
+    CEREAL_SERIALIZATION()
 
+    //cereal methods
     template<class Archive>
     void save(Archive & archive) const {
         archive( m_width, m_height, m_fmt, m_size,

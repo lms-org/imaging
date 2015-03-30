@@ -4,6 +4,7 @@ set ( SOURCES
 	"src/format.cpp"
 	"src/converter.cpp"
 	"src/pnm.cpp"
+	"src/image_factory.cpp"
 )
 
 set (HEADERS 
@@ -12,7 +13,7 @@ set (HEADERS
 	"include/lms/imaging/format.h"
 	"include/lms/imaging/converter.h"
 	"include/lms/imaging/pnm.h"
-	${HEADERS_SHARED}
+	"include/lms/imaging/image_factory.h"
 )
 
 include_directories("include")

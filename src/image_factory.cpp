@@ -1,6 +1,6 @@
 #include <lms/imaging/image_factory.h>
 #include <lms/imaging/image.h>
-
+#include <cmath>
 namespace lms {
 namespace imaging {
 void getPixel(Pixel &pixel,Image &image){
@@ -115,6 +115,54 @@ void sobel(const Image &input,Image &output){
     }
 }
 
+int sobelX(int x, int y, const Image &image) {
+    //TODO error checking
+    const std::uint8_t* data = image.data();
+    int height = image.height();
+    int width = image.width();
+
+    int valueSobelX = 0;
+    int y_index = width * (reflectY(height,y + (0 - 1)));
+
+    valueSobelX -= *(data + y_index + reflectX(width,x + (0-1)));
+    valueSobelX += *(data + y_index + reflectX(width,x + (2-1)));
+
+    y_index = width * (reflectY(height,y + (1 - 1)));
+
+    valueSobelX -= *(data + y_index + reflectX(width,x + (0-1))) << 1;
+    valueSobelX += *(data + y_index + reflectX(width,x + (2-1))) << 1;
+
+    y_index = width * (reflectY(height,y + (2 - 1)));
+
+    valueSobelX -= *(data + y_index + reflectX(width,x + (0-1)));
+    valueSobelX += *(data + y_index + reflectX(width,x + (2-1)));
+
+    return valueSobelX;
+}
+
+int sobelY(int x, int y,const Image &image) {
+    //TODO error checking
+    const std::uint8_t* data = image.data();
+    int height = image.height();
+    int width = image.width();
+
+    int valueSobelY = 0;
+    int y_index = width * (reflectY(height,y + (0 - 1)));
+
+    valueSobelY += *(data + y_index + reflectX(width,x + (0-1)));
+    valueSobelY += *(data + y_index + reflectX(width,x + (1-1))) << 1;
+    valueSobelY += *(data + y_index + reflectX(width,x + (2-1)));
+
+    y_index = width * (reflectY(height,y + (2 - 1)));
+
+    valueSobelY -= *(data + y_index + reflectX(width,x + (0-1)));
+    valueSobelY -= *(data + y_index + reflectX(width,x + (1-1))) << 1;
+    valueSobelY -= *(data + y_index + reflectX(width,x + (2-1)));
+
+    return valueSobelY;
+
+}
+
 int reflectX(int width, int px) {
 
     if(px < 0)
@@ -147,6 +195,22 @@ int reflectY(int height, int py) {
 
    return py;
 
+}
+
+
+void subtract(const Image &input1, const Image &input2, Image &output){
+    //TODO errorchecking
+    if(input1.format() == Format::GREY){
+        for(int x = 0; x < input1.width(); x++){
+            for(int y = 0; y < input1.height(); y++){
+                int v1 = *(input1.data()+y*input1.width()+x);
+                int v2 = *(input2.data()+y*input1.width()+x);
+                *(output.data()+y*input1.width()+x) = abs(v1-v2);
+            }
+        }
+    }else{
+        //not implemented yet
+    }
 }
 }
 }

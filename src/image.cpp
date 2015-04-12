@@ -38,6 +38,7 @@ Image& Image::operator=(const Image &rhs) {
 }
 
 void Image::resize(int width, int height, Format fmt) {
+    //TODO check if the width/height format are the same and do nothing
     int minBufSize = imageBufferSize(width, height, fmt);
 
     // check if current capacity is sufficient

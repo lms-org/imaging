@@ -27,6 +27,7 @@ void setPixel(Pixel &pixel,Image &image){
     }
 }
 
+namespace op{
 
 void gaussPxl(const Image &input,Image *output, Pixel *pixel,int x, int y){
     //TODO
@@ -131,40 +132,35 @@ void sobelY(const Image &input, Image &output) {
         }
     }
 }
-
-void imageOperator(const Image &input, Image &output,bool reflectBorders,int devisor) {
+void imageOperator(const Image &input,Image &output,const double *mat,int matRows, int matCols,bool reflectBorders,int devisor) {
     //TODO error checking
-    //TODO matrix übergeben
     for(int x = 0; x < input.width();x++){
         for(int y = 0; y< input.height(); y++){
-            *(output.data()+y*input.width()+x)=imageOperator(input,x,y,reflectBorders,devisor);
+            *(output.data()+y*input.width()+x)=(int)imageOperator(input,x,y,mat,matRows,matCols,reflectBorders,devisor);
         }
     }
 }
 
-int imageOperator(const Image &image,int x, int y,bool reflectBorders,int devisor){
+double imageOperator(const Image &image,int x, int y,const double *mat,int matRows, int matCols,bool reflectBorders,int devisor){
     //TODO error checking
-    //TODO matrix übergeben
-    int MATWIDTH = 3;
-    int MATHEIGHT = 3;
     int x_index = 0;
     int y_index = 0;
-    const int kernelSobelY[3][3] = {{1, 2, 1}, {0, 0, 0}, {-1, -2, -1}};
 
-    int result= 0;
-    int x_start = x-MATWIDTH/2;
-    int y_start = y-MATHEIGHT/2;
-    for(int k = 0; k < MATHEIGHT; k++) {
+    double result= 0;
+    int x_start = x-matCols/2;
+    int y_start = y-matRows/2;
+    //y-axis
+    for(int k = 0; k < matRows; k++) {
         y_index = image.width()*(validateY(y_start+k,image.height(),reflectBorders));
         if(y_index < 0){
             continue;
         }
-        for(int j = 0; j < MATWIDTH; j++) {
+        for(int j = 0; j < matCols; j++) {
             x_index = validateX(x_start + j,image.width(),reflectBorders);
             if(x_index < 0){
                 continue;
             }
-            result += *(image.data() + y_index + x_index)*kernelSobelY[k][j];
+            result += *(image.data() + y_index + x_index)* *(mat+k*matCols+j);
         }
     }
     return result/devisor;
@@ -309,6 +305,7 @@ void subtract(const Image &input1, const Image &input2, Image &output, int minVa
     }else{
         //not implemented yet
     }
-}
-}
+}//namespace op
+}//namespace imaging
+}//namespace lms
 }

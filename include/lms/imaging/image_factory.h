@@ -14,6 +14,15 @@ struct Pixel{
     int b;
     int a;
 };
+
+namespace op{
+//##################################################
+//################FILTER
+//##################################################
+const double KERNEL_GAUSS_5[5][5] = {{1,4,6,4,1},{4,16,24,16,4},{6,24,36,24,6},{4,16,24,16,4},{1,4,6,4,1}};
+const int GAUSS_5_DIV = 256;
+const double KERNEL_SOBEL_3_Y[3][3] = {{1, 2, 1}, {0, 0, 0}, {-1, -2, -1}};
+const double KERNEL_SOBEL_3_X_TODO[3][3] = {{-1, 0, 1}, {-2, 0, 2}, {-1, 0, 1}};
 //##################################################
 //################GAUS
 //##################################################
@@ -21,16 +30,17 @@ struct Pixel{
 
 int validateX(int x,int width,bool reflect);
 int validateY(int x,int width,bool reflect);
-void imageOperator(const Image &input, Image &output,bool reflectBorders,int devisor=1);
-int imageOperator(const Image &image,int x, int y,bool reflectBorders,int devisor = 1);
+void imageOperator(const Image &input, Image &output,const double *mat,int matRows, int matCols,bool reflectBorders,int devisor=1);
+double imageOperator(const Image &image,int x, int y,const double *mat,int matRows, int matCols,bool reflectBorders,int devisor = 1);
 /**
- * don't like it
+ * TODO remove that function, use validateX
  */
 int reflectX(int width, int px);
 /**
- * don't like it
+ * TODO remove that function, use validateY
  */
 int reflectY(int height, int py);
+//not sure if we need getPixel and setPixel
 void getPixel(Pixel &pixel,Image &image);
 void setPixel(Pixel &pixel,Image &image);
 //gaus
@@ -79,7 +89,7 @@ int sobelY(int x, int y,const Image &image);
 //##################################################
 
 void subtract(const Image &input1, const Image &input2, Image &output, int minVal=0, int maxVal=255);
-
+}  //namepace op
 }  // namespace imaging
 }  // namespace lms
 

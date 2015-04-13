@@ -115,6 +115,97 @@ void sobel(const Image &input,Image &output){
     }
 }
 
+void sobelX(const Image &input, Image &output) {
+    //TODO error checking
+    for(int x = 0; x < input.width();x++){
+        for(int y = 0; y< input.height(); y++){
+            *(output.data()+y*input.width()+x)=sobelX(x,y,input);
+        }
+    }
+}
+void sobelY(const Image &input, Image &output) {
+    //TODO error checking
+    for(int x = 0; x < input.width();x++){
+        for(int y = 0; y< input.height(); y++){
+            *(output.data()+y*input.width()+x)=sobelY(x,y,input);
+        }
+    }
+}
+
+void imageOperator(const Image &input, Image &output,bool reflectBorders,int devisor) {
+    //TODO error checking
+    //TODO matrix übergeben
+    for(int x = 0; x < input.width();x++){
+        for(int y = 0; y< input.height(); y++){
+            *(output.data()+y*input.width()+x)=imageOperator(input,x,y,reflectBorders,devisor);
+        }
+    }
+}
+
+int imageOperator(const Image &image,int x, int y,bool reflectBorders,int devisor){
+    //TODO error checking
+    //TODO matrix übergeben
+    int MATWIDTH = 3;
+    int MATHEIGHT = 3;
+    int x_index = 0;
+    int y_index = 0;
+    const int kernelSobelY[3][3] = {{1, 2, 1}, {0, 0, 0}, {-1, -2, -1}};
+
+    int result= 0;
+    int x_start = x-MATWIDTH/2;
+    int y_start = y-MATHEIGHT/2;
+    for(int k = 0; k < MATHEIGHT; k++) {
+        y_index = image.width()*(validateY(y_start+k,image.height(),reflectBorders));
+        if(y_index < 0){
+            continue;
+        }
+        for(int j = 0; j < MATWIDTH; j++) {
+            x_index = validateX(x_start + j,image.width(),reflectBorders);
+            if(x_index < 0){
+                continue;
+            }
+            result += *(image.data() + y_index + x_index)*kernelSobelY[k][j];
+        }
+    }
+    return result/devisor;
+
+}
+
+
+
+
+int validateX(int x,int width,bool reflect){
+    if(x < 0){
+        if(reflect){
+            return - x - 1;
+        }else
+            return 0;
+    }
+    if(x >= width){
+        if(reflect){
+            return 2*width-x-1;
+        }else
+            return width -1;
+    }
+    return x;
+}
+int validateY(int y,int height,bool reflect){
+    if(y < 0){
+        if(reflect){
+            return - y - 1;
+        }else
+            return -1;
+    }
+    if(y >= height){
+        if(reflect){
+            return 2*height-y-1;
+        }else
+            return -1;
+    }
+    return y;
+}
+
+
 int sobelX(int x, int y, const Image &image) {
     //TODO error checking
     const std::uint8_t* data = image.data();
@@ -198,14 +289,21 @@ int reflectY(int height, int py) {
 }
 
 
-void subtract(const Image &input1, const Image &input2, Image &output){
+void subtract(const Image &input1, const Image &input2, Image &output, int minVal, int maxVal){
     //TODO errorchecking
+    int value = 0;
     if(input1.format() == Format::GREY){
         for(int x = 0; x < input1.width(); x++){
             for(int y = 0; y < input1.height(); y++){
                 int v1 = *(input1.data()+y*input1.width()+x);
                 int v2 = *(input2.data()+y*input1.width()+x);
-                *(output.data()+y*input1.width()+x) = abs(v1-v2);
+                value = abs(v1-v2);
+                if(value <= minVal)
+                    value = 0;
+                if(value >= maxVal){
+                    value = 255;
+                }
+                *(output.data()+y*input1.width()+x) = value;
             }
         }
     }else{

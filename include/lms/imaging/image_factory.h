@@ -18,6 +18,11 @@ struct Pixel{
 //################GAUS
 //##################################################
 //default methods
+
+int validateX(int x,int width,bool reflect);
+int validateY(int x,int width,bool reflect);
+void imageOperator(const Image &input, Image &output,bool reflectBorders,int devisor=1);
+int imageOperator(const Image &image,int x, int y,bool reflectBorders,int devisor = 1);
 /**
  * don't like it
  */
@@ -51,6 +56,8 @@ void gauss(const Image &input,Image &output);
 void sobelPxl(const Image &input,Image *output, Pixel *pixel,int x, int y);
 void sobel(const Image &input,Image &output);
 
+void sobelX(const Image &input, Image &output);
+void sobelY(const Image &input, Image &output);
 int sobelX(int x, int y,const Image &image);
 int sobelY(int x, int y,const Image &image);
 /**
@@ -71,7 +78,7 @@ int sobelY(int x, int y,const Image &image);
 //################STANDARD
 //##################################################
 
-void subtract(const Image &input1, const Image &input2, Image &output);
+void subtract(const Image &input1, const Image &input2, Image &output, int minVal=0, int maxVal=255);
 
 }  // namespace imaging
 }  // namespace lms

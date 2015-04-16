@@ -10,13 +10,15 @@
 namespace lms {
 namespace imaging {
 
-bool savePGM(const Image &image, const std::string &path) {
-    if(image.format() != lms::imaging::Format::GREY) {
+bool pnmHelperSave(const Image &image, const std::string &path,
+                   Format checkFormat, const std::string &type) {
+    if(image.format() != checkFormat) {
         return false;
     }
 
     std::ofstream of(path, std::ios::binary);
-    of << "P5\n" << image.width() << " " << image.height() << " " << 255 << "\n";
+    of << type << "\n" << image.width() << " " << image.height()
+       << " " << 255 << "\n";
 
     std::copy(
             reinterpret_cast<const char*>(image.data()),
@@ -28,11 +30,12 @@ bool savePGM(const Image &image, const std::string &path) {
     return true;
 }
 
-bool readPGM(Image &image, const std::string &path) {
+bool pnmHelperRead(Image &image, const std::string &path,
+                   Format checkFormat, const std::string &type) {
     std::ifstream is(path, std::ios::binary);
 
     std::string magicLine;
-    if(!std::getline(is, magicLine) || magicLine != "P5") {
+    if(!std::getline(is, magicLine) || magicLine != type) {
         return false;
     }
 
@@ -40,13 +43,13 @@ bool readPGM(Image &image, const std::string &path) {
     is >> width >> height >> maxVal;
 
     if(maxVal != 255) {
-        // we are stupid here, because we rely on the behavior of savePGM
+        // we are stupid here, because we rely on the behavior of save
         return false;
     }
 
-    image.resize(width, height, lms::imaging::Format::GREY);
+    image.resize(width, height, checkFormat);
 
-    // skip one byte (is will be a whitespace character)
+    // skip one byte (this will be a whitespace character)
     is.ignore(1);
 
     // read data from ifstream into buffer
@@ -57,6 +60,22 @@ bool readPGM(Image &image, const std::string &path) {
     is.close();
 
     return true;
+}
+
+bool savePGM(const Image &image, const std::string &path) {
+    return pnmHelperSave(image, path, Format::GREY, "P5");
+}
+
+bool readPGM(Image &image, const std::string &path) {
+    return pnmHelperRead(image, path, Format::GREY, "P5");
+}
+
+bool savePPM(const Image &image, const std::string &path) {
+    return pnmHelperSave(image, path, Format::RGB, "P6");
+}
+
+bool readPPM(Image &image, const std::string &path) {
+    return pnmHelperRead(image, path, Format::RGB, "P6");
 }
 
 }  // namespace imaging

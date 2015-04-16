@@ -18,6 +18,10 @@ void convertYUYVtoBGRA(const std::uint8_t *src, int srcSize, std::uint8_t *dst);
 
 void convertGREYtoBGRA(const std::uint8_t *src, int srcSize, std::uint8_t *dst);
 
+void convertYUYVtoRGB(const std::uint8_t *src, int srcSize, std::uint8_t *dst);
+
+void convertGREYtoRGB(const std::uint8_t *src, int srcSize, std::uint8_t *dst);
+
 }  // namespace imaging
 }  // namespace lms
 

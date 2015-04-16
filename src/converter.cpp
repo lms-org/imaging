@@ -25,6 +25,14 @@ bool convertRaw(Format srcFormat, const std::uint8_t *src, int srcSize,
         convertGREYtoBGRA(src, srcSize, dst);
         return true;
     }
+    if(srcFormat == Format::YUYV && dstFormat == Format::RGB) {
+        convertYUYVtoRGB(src, srcSize, dst);
+        return true;
+    }
+    if(srcFormat == Format::GREY && dstFormat == Format::RGB) {
+        convertGREYtoRGB(src, srcSize, dst);
+        return true;
+    }
     return false;
 }
 
@@ -99,14 +107,46 @@ void convertYUYVtoBGRA(const std::uint8_t *src, int srcSize, std::uint8_t *dst) 
 
 void convertGREYtoBGRA(const std::uint8_t *src, int srcSize, std::uint8_t *dst) {
     size_t i = srcSize;
+    std::uint8_t srcVal;
 
     while(i--) {
-        *dst++ = *src;  // B
-        *dst++ = *src;  // G
-        *dst++ = *src;  // R
+        srcVal = *src++;
+        *dst++ = srcVal;  // B
+        *dst++ = srcVal;  // G
+        *dst++ = srcVal;  // R
         *dst++ = 255;   // A
+    }
+}
 
-        src++;
+void convertYUYVtoRGB(const std::uint8_t *src, int srcSize, std::uint8_t *dst) {
+    int i = srcSize / 4;
+    int y, u, y2, v;
+
+    while(i--) {
+        y = *src++;
+        u = *src++;
+        y2 = *src++;
+        v = *src++;
+
+        //               R    G        B
+        yuv2rgb(y, u, v, dst, dst + 1, dst + 2);
+
+        //                R        G        B
+        yuv2rgb(y2, u, v, dst + 4, dst + 5, dst + 6);
+
+        dst += 6;  // Two pixels with each 3 bytes
+    }
+}
+
+void convertGREYtoRGB(const std::uint8_t *src, int srcSize, std::uint8_t *dst) {
+    size_t i = srcSize;
+    std::uint8_t srcVal;
+
+    while(i--) {
+        srcVal = *src++;
+        *dst++ = srcVal;  // R
+        *dst++ = srcVal;  // G
+        *dst++ = srcVal;  // B
     }
 }
 

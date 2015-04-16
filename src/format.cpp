@@ -8,6 +8,7 @@ int bytesPerPixel(Format fmt) {
     case Format::GREY: return 1;
     case Format::YUYV: return 2;
     case Format::BGRA: return 4;
+    case Format::RGB : return 3;
     case Format::UNKNOWN:  // go to default
     default: return -1;  // Don't forget to implement missing formats
     }
@@ -23,6 +24,7 @@ std::string formatToString(Format fmt) {
     case Format::GREY: return "GREY";
     case Format::YUYV: return "YUYV";
     case Format::BGRA: return "BGRA";
+    case Format::RGB : return "RGB";
     case Format::UNKNOWN:  // go to default
     default: return "UNKNOWN";
     }
@@ -32,6 +34,7 @@ Format formatFromString(const std::string &str) {
     if(str == "GREY") return Format::GREY;
     if(str == "YUYV") return Format::YUYV;
     if(str == "BGRA") return Format::BGRA;
+    if(str == "RGB")  return Format::RGB;
     return Format::UNKNOWN;
 }
 

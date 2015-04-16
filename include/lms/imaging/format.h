@@ -8,7 +8,7 @@ namespace lms {
 namespace imaging {
 
 enum class Format : std::uint8_t {
-    UNKNOWN = 0, GREY = 1, YUYV = 2, BGRA = 3
+    UNKNOWN = 0, GREY = 1, YUYV = 2, BGRA = 3, RGB = 4
 };
 
 /**

@@ -132,7 +132,7 @@ void convertYUYVtoRGB(const std::uint8_t *src, int srcSize, std::uint8_t *dst) {
         yuv2rgb(y, u, v, dst, dst + 1, dst + 2);
 
         //                R        G        B
-        yuv2rgb(y2, u, v, dst + 4, dst + 5, dst + 6);
+        yuv2rgb(y2, u, v, dst + 3, dst + 4, dst + 5);
 
         dst += 6;  // Two pixels with each 3 bytes
     }

@@ -13,6 +13,7 @@ Converting image formats:
 - YUYV -> GREY
 - YUYV -> BGRA
 - GREY -> BGRA
+- RGB -> BGRA
 - YUYV -> RGB
 - GREY -> RGB
 

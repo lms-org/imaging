@@ -13,6 +13,11 @@ bool convert(const Image &input, Image &output, Format targetFormat) {
 bool convertRaw(Format srcFormat, const std::uint8_t *src, int srcSize,
                 Format dstFormat, std::uint8_t *dst) {
 
+    if(srcFormat == dstFormat) { // if source format == destination format
+        // then just copy the data
+        std::copy_n(src, srcSize, dst);
+        return true;
+    }
     if(srcFormat == Format::YUYV && dstFormat == Format::GREY) {
         convertYUYVtoGREY(src, srcSize, dst);
         return true;
@@ -31,6 +36,10 @@ bool convertRaw(Format srcFormat, const std::uint8_t *src, int srcSize,
     }
     if(srcFormat == Format::GREY && dstFormat == Format::RGB) {
         convertGREYtoRGB(src, srcSize, dst);
+        return true;
+    }
+    if(srcFormat == Format::RGB && dstFormat == Format::BGRA) {
+        convertRGBtoBGRA(src, srcSize, dst);
         return true;
     }
     return false;
@@ -147,6 +156,18 @@ void convertGREYtoRGB(const std::uint8_t *src, int srcSize, std::uint8_t *dst) {
         *dst++ = srcVal;  // R
         *dst++ = srcVal;  // G
         *dst++ = srcVal;  // B
+    }
+}
+
+void convertRGBtoBGRA(const std::uint8_t *src, int srcSize, std::uint8_t *dst) {
+    size_t i = srcSize / 3;
+
+    while(i--) {
+        *dst++ = src[2];  // B
+        *dst++ = src[1];  // G
+        *dst++ = src[0];  // R
+        *dst++ = 255;     // A
+        src += 3;
     }
 }
 

@@ -104,7 +104,7 @@ void gauss(const Image &input,Image &output){
     }
 }
 
-void sobelPxl(const Image &input,Image *output, Pixel pixel,int x, int y){
+void sobelPxl(const Image &input,Image *output, Pixel *pixel,int x, int y){
     //TODO
 }
 

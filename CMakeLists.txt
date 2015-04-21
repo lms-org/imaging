@@ -5,6 +5,13 @@ set ( SOURCES
 	"src/converter.cpp"
 	"src/pnm.cpp"
 	"src/image_factory.cpp"
+##########find
+	"src/find/edge_point.cpp"
+	"src/find/line.cpp"
+	"src/find/line_point.cpp"
+	"src/find/object.cpp"
+	"src/find/pixel.cpp"
+
 )
 
 set (HEADERS 
@@ -14,6 +21,12 @@ set (HEADERS
 	"include/lms/imaging/converter.h"
 	"include/lms/imaging/pnm.h"
 	"include/lms/imaging/image_factory.h"
+##########find
+	"include/lms/imaging/find/edge_point.h"
+	"include/lms/imaging/find/line.h"
+	"include/lms/imaging/find/line_point.h"
+	"include/lms/imaging/find/object.h"
+	"include/lms/imaging/find/pixel.h"
 )
 
 include_directories("include")

@@ -4,16 +4,6 @@
 #include <lms/imaging/image.h>
 namespace lms {
 namespace imaging {
-struct Pixel{
-    //position
-    int x;
-    int y;
-    //color
-    int r;
-    int g;
-    int b;
-    int a;
-};
 
 namespace op{
 //##################################################
@@ -32,21 +22,8 @@ int validateX(int x,int width,bool reflect);
 int validateY(int x,int width,bool reflect);
 void imageOperator(const Image &input, Image &output,const double *mat,int matRows, int matCols,bool reflectBorders,int devisor=1);
 double imageOperator(const Image &image,int x, int y,const double *mat,int matRows, int matCols,bool reflectBorders,int devisor = 1);
-/**
- * TODO remove that function, use validateX
- */
-int reflectX(int width, int px);
-/**
- * TODO remove that function, use validateY
- */
-int reflectY(int height, int py);
-//not sure if we need getPixel and setPixel
-void getPixel(Pixel &pixel,Image &image);
-void setPixel(Pixel &pixel,Image &image);
 //gaus
-void gaussPxl(const Image &input,Image *output, Pixel *pixel,int x, int y);
-void gaussPxl(const Image &input,Image *output, Pixel &pixel);
-int gaussPxlGrey(const Image &input,int x, int y);
+
 /**
  * TODO set the size of the output image if it's not set yet and the type etc...
  * @brief gauss
@@ -54,6 +31,8 @@ int gaussPxlGrey(const Image &input,int x, int y);
  * @param output
  */
 void gauss(const Image &input,Image &output);
+void gaussPxl(const Image &input,Image *output,int x, int y);
+int gaussGrey(const Image &input,int x, int y);
 //##################################################
 //################GAUS END
 //##################################################
@@ -63,9 +42,6 @@ void gauss(const Image &input,Image &output);
 //################SOBEL
 //##################################################
 //sobel
-void sobelPxl(const Image &input,Image *output, Pixel *pixel,int x, int y);
-void sobel(const Image &input,Image &output);
-
 void sobelX(const Image &input, Image &output);
 void sobelY(const Image &input, Image &output);
 int sobelX(int x, int y,const Image &image);

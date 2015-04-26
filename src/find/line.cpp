@@ -20,9 +20,9 @@ bool Line::find(Pixel &startPoint, int searchLength, float searchAngle,int minWi
     //Senkrecht zur suchrichtung verläuft dann die suchlinie für den nächsten punk
     //
     //TODO extend below
-    extend(initPoint,true,maxSteps,stepLength);
+    //extend(initPoint,true,maxSteps,stepLength);
     //TODO extend above
-    extend(initPoint,false,maxSteps,stepLength);
+    //extend(initPoint,false,maxSteps,stepLength);
 
     /*
     points.clear();
@@ -205,7 +205,7 @@ void Line::extendVerifiedLine(int stepsizeX, int stepsizeY){
 }
 
 int Line::extend(LinePoint &start, bool direction,int stepLengthMin, int stepLengthMax, float searchLength){
-    LinePoint newpoint = lp;
+    LinePoint newpoint = start;
 /*
     LinePoint newpoint = lp;
     bool found = 0;

@@ -8,8 +8,7 @@ set ( SOURCES
 ##########find
 	"src/find/edge_point.cpp"
 	"src/find/line.cpp"
-	"src/find/line_point.cpp"
-	"src/find/object.cpp"
+        "src/find/line_point.cpp"
 	"src/find/pixel.cpp"
 
 )

@@ -2,6 +2,9 @@
 #define LMS_IMAGING_IMAGE_FACTORY_H
 
 #include <lms/imaging/image.h>
+#include <functional>
+#include <vector>
+
 namespace lms {
 namespace imaging {
 
@@ -31,8 +34,20 @@ double imageOperator(const Image &image,int x, int y,const double *mat,int matRo
  * @param output
  */
 void gauss(const Image &input,Image &output);
-void gaussPxl(const Image &input,Image *output,int x, int y);
+void gaussPxl(const Image &input,Image &output,int x, int y);
 int gaussGrey(const Image &input,int x, int y);
+
+/**
+ * @brief gaussBox
+ * @param input
+ * @param output
+ * @param xMin
+ * @param yMin
+ * @param xMax
+ * @param yMax
+ */
+void gaussBox(const Image &input,Image &output,int xMin, int yMin,int xMax, int yMax);
+
 //##################################################
 //################GAUS END
 //##################################################
@@ -66,6 +81,10 @@ int sobelY(int x, int y,const Image &image);
 
 void subtract(const Image &input1, const Image &input2, Image &output, int minVal=0, int maxVal=255);
 }  //namepace op
+
+void bresenhamLine(int x0, int y0, int x1, int y1,std::function<bool(int,int)> foundPixel);
+void bresenhamLine(int x0, int y0, int x1, int y1, std::vector<int> &vX, std::vector<int> &vY);
+
 }  // namespace imaging
 }  // namespace lms
 

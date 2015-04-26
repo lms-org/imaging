@@ -1,37 +1,30 @@
-#include "image/image_line.h"
-#include "image/image_line_point.h"
+#include "lms/imaging/find/line.h"
+#include "lms/imaging/find/line_point.h"
 #include <math.h>
 #include <algorithm>
-
-
-int Line::serialize (Data::ImageDataSpace::Image *imageStruct){
-
-    if (points.size() < minPoints) {
-        //printf("Image_Line: min Point size!!!!!!!\n");
-        return 0;
-    }
-    imageStruct->count = 0;
-    for(auto it = points.begin(); it != points.end(); it++) {
-        imageStruct->add(it->up.pixel.x,it->up.pixel.y, it->up.non_disc_direction);
-        //printf("Punkt: %i | %i \n", it->up.pixel.x, it->up.pixel.y);
-    }
-
-    imageStruct->type = Data::PointType::POINT_TYPE_LINE;
-    imageStruct->id = get_myHint()->id;
-    //imageStruct->flagset = get_myHint()->flagset;
-    if(get_myHint()->flagset & 0x01)
-        imageStruct->flagset = get_myHint()->flagset-1;
-    else
-        imageStruct->flagset = get_myHint()->flagset;
-    //printf("\033[31m Image Seralize: %i \n \033[0m", get_myHint()->id);
-    //imageStruct->id = i++;
-    return points.size();
-}
-
+namespace lms{
+namespace imaging{
+namespace find{
 //initialsuche wenn man davor noch nichts gefunden hat
-bool Line::find(Pixel px, uint16_t length, int16_t phi)
-{
-    //printf("find \n");
+bool Line::find(Pixel &startPoint, int searchLength, float searchAngle,int minWidth,int maxWidth, int sobelThreshold,Image &gaussBuffer){
+    //clear old stuff
+    points.clear();
+    //find first point
+    LinePoint initPoint;
+    if(!initPoint.find(startPoint, searchLength, searchAngle,minWidth,maxWidth, sobelThreshold,gaussBuffer))
+        return false;
+    int maxSteps = 100;
+    float stepLength = 10;
+    //Wie entscheidet man, in welche richtung man erweitern möchte?
+    //----> man gibt eine suchrichtung in, in welche der nächste punkt gesucht werden soll.
+    //Senkrecht zur suchrichtung verläuft dann die suchlinie für den nächsten punk
+    //
+    //TODO extend below
+    extend(initPoint,true,maxSteps,stepLength);
+    //TODO extend above
+    extend(initPoint,false,maxSteps,stepLength);
+
+    /*
     points.clear();
     LinePoint newpoint;
 	//sucht einen linepoint
@@ -58,13 +51,13 @@ bool Line::find(Pixel px, uint16_t length, int16_t phi)
         return true;
 
     }
-
+    */
     return false;
 
 }
 
-bool Line::verify()
-{
+bool Line::verify(){
+    /*
     // Verifizierung von jedem Linienpunkt
     //printf("points: %i\n", points.size());
     if(points.size() > 2) {
@@ -137,13 +130,14 @@ bool Line::verify()
         points.clear();
         return false;
     }
+    */
+    return false;
 
 }
 
 /// Falls der Abstand zw. zwei Punkten zu groß wird -> neue Suche von Linienpunkten dazwischen
 
-void Line::insertbetween(int maxDist, int stepsizeX, int stepsizeY)
-{
+void Line::insertbetween(int maxDist, int stepsizeX, int stepsizeY){
 
     for (auto it = points.begin(); (it != points.end() - 1) && (it != points.end()); it++) {
         int dist = calcDistance(*it, *(it+1));
@@ -154,7 +148,7 @@ void Line::insertbetween(int maxDist, int stepsizeX, int stepsizeY)
             if(counter > 0) {
                 //printf("counter: %i @%i\n", counter, it - points.begin());
                 LinePoint newLinePoint = *it;
-                int cnt = extend(*(it+1), -stepsizeX, -stepsizeY, 1, false, it+1, counter, &it, &newLinePoint);
+                int cnt = 0;// extend(*(it+1), -stepsizeX, -stepsizeY, 1, false, it+1, counter, &it, &newLinePoint);
                 ///We do not use the number of how many points were inserted -> silence the compiler
                 (void)cnt;
             }
@@ -164,8 +158,8 @@ void Line::insertbetween(int maxDist, int stepsizeX, int stepsizeY)
 }
 
 /// Die letzten zwei Linienpunkte müssen gesondert verifiziert werden
-void Line::verifyLastPoints()
-{
+void Line::verifyLastPoints(){
+    /*
     // Vorletzten Punkt verifizieren
     std::deque<LinePoint>::iterator last = points.end() - 2;
     last->up.pixel.yellow();
@@ -190,12 +184,12 @@ void Line::verifyLastPoints()
     } else {
         last = points.erase(last);
     }
-
+    */
 }
 
 /// Ab dem obersten und untersten Linienpunkt wird versucht die Linie zu erweitern
-void Line::extendVerifiedLine(int stepsizeX, int stepsizeY)
-{
+void Line::extendVerifiedLine(int stepsizeX, int stepsizeY){
+    /*
     std::deque<LinePoint>::iterator i = points.end()-1;
     i->up.pixel.blue();
     int found_below = extend(*i, stepsizeX+8, stepsizeY+8, 0, false, points.end());
@@ -207,11 +201,12 @@ void Line::extendVerifiedLine(int stepsizeX, int stepsizeY)
     ///We do not user found_below/above, so silence the compiler
     (void) found_above;
     (void) found_below;
+    */
 }
 
-int Line::extend(LinePoint &lp, int stepsizeX, int stepsizeY, bool sign, bool changingSearchDir, std::deque<LinePoint>::iterator it, int counter, std::deque<LinePoint>::iterator* outIt, LinePoint* startPoint)
-{
-
+int Line::extend(LinePoint &start, bool direction,int stepLengthMin, int stepLengthMax, float searchLength){
+    LinePoint newpoint = lp;
+/*
     LinePoint newpoint = lp;
     bool found = 0;
     int sumFound = 0;
@@ -269,14 +264,7 @@ int Line::extend(LinePoint &lp, int stepsizeX, int stepsizeY, bool sign, bool ch
             //printf("gradient: %f | %f \n", start.up.non_disc_direction, newpoint.up.non_disc_direction);
             /// Checken ob der Winkel zwischen den beiden letzten Punkten zu groß ist
             /// (Es könnte sich z.B. um eine Start- od. Kreuzungslinie handeln)
-           /*if(!checkAngle(start, newpoint)) {
-                found = false;
-                newpoint.up.pixel.red();
-                newpoint.down.pixel.red();
-                //printf("gradient: %f | %f", start.up.non_disc_direction, start.up.non_disc_direction);
-                break;
 
-            }*/
             if(fabs(start.up.non_disc_direction - newpoint.up.non_disc_direction) > 25.0){
                 found = false;
                 newpoint.up.pixel.red();
@@ -306,13 +294,15 @@ int Line::extend(LinePoint &lp, int stepsizeX, int stepsizeY, bool sign, bool ch
     }
 
     return sumFound;
+    */
+    return 0;
 
 }
 
 int Line::calcDistance(LinePoint &first, LinePoint &next) {
 
-    int dx = first.up.pixel.x - next.up.pixel.x;
-    int dy = first.up.pixel.y - next.up.pixel.y;
+    int dx = first.low_high.x - next.low_high.x;
+    int dy = first.low_high.y - next.low_high.y;
 
     return sqrt(dx*dx + dy*dy);
 
@@ -332,11 +322,11 @@ bool Line::checkAngle(LinePoint &start, LinePoint &next) {
     float angle_start = 0.0;
     float angle_next = 0.0;
 
-    float dx_start = abs(start.up.pixel.x - start.down.pixel.x);
-    float dy_start = abs(start.up.pixel.y - start.down.pixel.y);
+    float dx_start = abs(start.low_high.x - start.high_low.x);
+    float dy_start = abs(start.low_high.y - start.high_low.y);
 
-    float dx_next = abs(next.up.pixel.x - next.down.pixel.x);
-    float dy_next = abs(next.up.pixel.y - next.down.pixel.y);
+    float dx_next = abs(next.low_high.x - next.high_low.x);
+    float dy_next = abs(next.low_high.y - next.high_low.y);
 
     if(dx_start == 0)
         angle_start = M_PI;
@@ -347,7 +337,7 @@ bool Line::checkAngle(LinePoint &start, LinePoint &next) {
     angle_next = atan2(dy_next, dx_next);
 
     float dangle = fabs(angle_next - angle_start);
-    float dgradient = fabs(start.up.non_disc_direction - next.up.non_disc_direction);
+    float dgradient = 0;//fabs(start.up.non_disc_direction - next.up.non_disc_direction);
 
     if(dangle > (70.0/180.0)*M_PI || dgradient > 60) {
         //printf("%f | %f \n", (dangle/M_PI)*180.0, dgradient);
@@ -357,3 +347,7 @@ bool Line::checkAngle(LinePoint &start, LinePoint &next) {
         return true;
 
 }
+
+} //namepsace find
+} //namespace imaging
+} //namespace lms

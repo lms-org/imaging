@@ -8,25 +8,45 @@
 namespace lms{
 namespace imaging{
 namespace find{
-class EdgePoint{
+class EdgePoint: public Pixel{
+
+public:
+    enum class EdgeType {LOW_HIGH, HIGH_LOW, PLANE};
+
+private:
+    int m_sobelX;
+    int m_sobelY;
+    float m_sobelAngle;
+    EdgeType m_type;
 
     public:
+        int sobelX();
+        int sobelY();
+        /**
+         * @brief sobelAngle
+         * @return the angle from -PI to PI
+         */
+        float sobelAngle();
+        EdgeType type();
+        /**
+         * @brief find
+         * @param startPoint starting point
+         * @param searchLength length of the line used to find an edge
+         * @param searchAngle angle in radians
+         * @param searchtype
+         * @param threshold
+         * @return true if the edgePoint was found, if not the contained values like sobelX/Y etc. are just random!
+         */
+        bool find(Pixel &startPoint, int searchLength, float searchAngle, EdgeType searchtype, int threshold,Image &gaussBuffer);
 
-        enum edgetype {low_high, high_low, plane};
-
-        Pixel pixel;
-        int gradient = NAN;
-        int direction = NAN;
-        float non_disc_direction = NAN; //in Bogenmaß
-        bool verified;
-        edgetype type;
-
-        bool find(Pixel pixel, int length, int16_t dir, edgetype searchtype, int threshold);
-    protected:
-        Pixel lastPoints[2];
+protected:
         bool confirmEdgePoint(int threshold);
         void nonMaximumSupression(int rowShift, int colShift);
-        void checkType();
+        /**
+         * @brief setType "calculates" the type
+         * @return the found type
+         */
+        EdgePoint::EdgeType setType();
 
 };
 

@@ -30,6 +30,16 @@ bool LinePoint::find(Pixel &startPoint, int searchLength, float searchAngle,int 
 
 }
 
+float LinePoint::getAngle(){
+    return atan(getSlope());
+}
+
+float LinePoint::getSlope(){
+    float dx = low_high.x-high_low.x;
+    float dy = low_high.y-high_low.y;
+    return dy/dx;
+}
+
 } //namepsace find
 } //namespace imaging
 } //namespace lms

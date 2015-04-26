@@ -13,6 +13,7 @@ public:
     bool find(Pixel &startPoint, int searchLength, float searchAngle,int minWidth,int maxWidth, int sobelThreshold,Image &gaussBuffer);
 
 protected:
+    //TODO use a doubly linked list!
     std::vector<LinePoint> points;
     //std::deque<LinePoint> points;
 
@@ -36,7 +37,7 @@ protected:
 
     int limitAngle(int dir);
     bool initialSearch(Pixel px, uint16_t length, int16_t phi);
-    int extend(LinePoint &start, bool direction,int stepLengthMin, int stepLengthMax, float searchLength);
+    int extend(LinePoint &start, bool direction,int stepLengthMin, int stepLengthMax,float lineWidth, float lineLength,Image &gaussBuffer);
     void extendVerifiedLine(int stepsizeX, int stepsizeY);
     void verifyLastPoints();
     void insertbetween(int maxDist, int stepsizeX, int stepsizeY);

@@ -1,6 +1,6 @@
 #include "lms/imaging/find/line.h"
 #include "lms/imaging/find/line_point.h"
-#include <math.h>
+#include <cmath>
 #include <algorithm>
 namespace lms{
 namespace imaging{
@@ -23,35 +23,6 @@ bool Line::find(Pixel &startPoint, int searchLength, float searchAngle,int minWi
     //extend(initPoint,true,maxSteps,stepLength);
     //TODO extend above
     //extend(initPoint,false,maxSteps,stepLength);
-
-    /*
-    points.clear();
-    LinePoint newpoint;
-	//sucht einen linepoint
-    bool found = newpoint.find(px, length, phi);
-
-    if(found) {
-
-        points.push_back(newpoint);
-	//sucht nach unten
-        int found_below = extend(newpoint, stepsizeX, stepsizeY, 0, true, points.end());
-	//sucht nach oben um linie zu erweitern
-        int found_above = extend(newpoint, -stepsizeX, -stepsizeY, 1, true, points.begin());
-
-        ///Found below & Above are not used - silence the compiler
-        (void)found_above;
-        (void)found_below;
-
-        std::sort(points.begin(), points.end());
-
-        for(std::deque<LinePoint>::iterator i = points.begin(); i != points.end(); i++) {
-            i->up.pixel.yellow();
-        }
-
-        return true;
-
-    }
-    */
     return false;
 
 }
@@ -204,8 +175,54 @@ void Line::extendVerifiedLine(int stepsizeX, int stepsizeY){
     */
 }
 
-int Line::extend(LinePoint &start, bool direction,int stepLengthMin, int stepLengthMax, float searchLength){
-    LinePoint newpoint = start;
+int Line::extend(LinePoint &start, bool direction,int stepLengthMin, int stepLengthMax,float lineWidth, float lineLength,Image &gaussBuffer){
+    LinePoint searchPoint = start;
+    Pixel pixel;
+    pixel.setImage(start.high_low.getImage());
+    float searchStepX;
+    float searchStepY;
+    float searchAngle;
+    float currentLength;
+    float currentStepLength = stepLengthMax;
+    if(direction){
+        searchAngle = start.getAngle()+M_PI_2l;
+    }else{
+        searchAngle = start.getAngle()-M_PI_2l;
+    }
+    //move the point along the tangent of the line and afterwards move it from the line so the point isn't already on the line
+    searchStepX = cos(searchAngle)*stepLengthMax-lineWidth*cos(start.getAngle());
+    searchStepY = sin(searchAngle)*stepLengthMax-lineWidth*sin(start.getAngle());
+    //search as long as the searchLength isn't reached
+    while(currentLength < lineLength){
+
+        //try to find a new point
+        //calculate new searchPoint
+        if(!pixel.move(searchStepX,searchStepY)){
+            //out of the image!
+            //TODO return
+            return 0;
+        }
+        //TODO sobel magic number
+        int sobelThreshold = 100;
+        //2 and 3 are magic numbers :)
+        if(searchPoint.find(pixel,lineWidth*3,start.getAngle(),lineWidth/2,lineWidth*2,sobelThreshold,gaussBuffer)){
+            //found a new point, search for next one
+
+        }else{
+            //found no point, decrease length
+            //TODO add some better algo.
+            currentStepLength *= 0.5;
+
+            if(currentStepLength < stepLengthMin){
+                //stop searching, no more points can be found on this line
+                //TODO return
+                return 0;
+            }
+        }
+
+    }
+
+
 /*
     LinePoint newpoint = lp;
     bool found = 0;

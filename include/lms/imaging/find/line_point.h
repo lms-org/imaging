@@ -14,7 +14,8 @@ class LinePoint {
 public:
     EdgePoint low_high, high_low;
     bool find(Pixel &startPoint, int searchLength, float searchAngle,int minWidth,int maxWidth, int sobelThreshold,Image &gaussBuffer);
-
+    float getAngle();
+    float getSlope();
 };
 
 } //namepsace find

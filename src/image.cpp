@@ -38,18 +38,20 @@ Image& Image::operator=(const Image &rhs) {
 }
 
 void Image::resize(int width, int height, Format fmt) {
-    //TODO check if the width/height format are the same and do nothing
-    int minBufSize = imageBufferSize(width, height, fmt);
+    // we won't do anything if not atleast one parameter changed
+    if(m_width != width || m_height != height || m_fmt != fmt) {
+        int minBufSize = imageBufferSize(width, height, fmt);
 
-    // check if current capacity is sufficient
-    if(capacity() >= minBufSize) {
-        this->m_width = width;
-        this->m_height = height;
-        this->m_fmt = fmt;
-        this->m_size = minBufSize;
-    } else {
-        // using move assignment operator here
-        *this = Image(width, height, fmt);
+        // check if current capacity is sufficient
+        if(capacity() >= minBufSize) {
+            this->m_width = width;
+            this->m_height = height;
+            this->m_fmt = fmt;
+            this->m_size = minBufSize;
+        } else {
+            // using move assignment operator here
+            *this = Image(width, height, fmt);
+        }
     }
 }
 

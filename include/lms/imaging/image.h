@@ -170,10 +170,12 @@ public:
 
     template<class Archive>
     void load(Archive & archive) {
-        archive( m_width, m_height, m_fmt, m_size );
-        m_data.reset(new std::uint8_t[m_size]);
-        archive(cereal::binary_data(m_data.get(), m_size * sizeof(std::uint8_t)));
-        m_capacity = m_size;
+        int width, height, size;
+        Format fmt;
+
+        archive(width, height, fmt, size);
+        resize(width, height, fmt);
+        archive(cereal::binary_data(m_data.get(), size * sizeof(std::uint8_t)));
     }
 #endif
 

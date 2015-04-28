@@ -228,7 +228,8 @@ void subtract(const Image &input1, const Image &input2, Image &output, int minVa
     }else{
         //not implemented yet
     }
-}//namespace op
+}
+} //namespace op
 void bresenhamLine(int x0, int y0, int x1, int y1,std::function<bool(int,int)> foundPixel){
   int dx =  abs(x1-x0), sx = x0<x1 ? 1 : -1;
   int dy = -abs(y1-y0), sy = y0<y1 ? 1 : -1;
@@ -253,4 +254,3 @@ void bresenhamLine(int x0, int y0, int x1, int y1, std::vector<int> &vX, std::ve
 }
 }//namespace imaging
 }//namespace lms
-}

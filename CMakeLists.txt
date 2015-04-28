@@ -5,6 +5,7 @@ set ( SOURCES
 	"src/converter.cpp"
 	"src/pnm.cpp"
 	"src/image_factory.cpp"
+    "src/graphics.cpp"
 ##########find
 	"src/find/edge_point.cpp"
 	"src/find/line.cpp"
@@ -20,6 +21,7 @@ set (HEADERS
 	"include/lms/imaging/converter.h"
 	"include/lms/imaging/pnm.h"
 	"include/lms/imaging/image_factory.h"
+    "include/lms/imaging/graphics.h"
 ##########find
 	"include/lms/imaging/find/edge_point.h"
 	"include/lms/imaging/find/line.h"

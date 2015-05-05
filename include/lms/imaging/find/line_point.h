@@ -3,6 +3,7 @@
 
 #include "lms/imaging/find/edge_point.h"
 #include "lms/imaging/find/pixel.h"
+#include <lms/imaging/draw_debug.h>
 
 namespace lms{
 namespace imaging{
@@ -13,7 +14,7 @@ class LinePoint {
 
 public:
     EdgePoint low_high, high_low;
-    bool find(Pixel &startPoint, int searchLength, float searchAngle,int minWidth,int maxWidth, int sobelThreshold,Image &gaussBuffer);
+    bool find(Pixel &startPoint, int searchLength, float searchAngle,int minWidth,int maxWidth, int sobelThreshold,Image &gaussBuffer DRAWDEBUG);
     float getAngle();
     float getSlope();
 };

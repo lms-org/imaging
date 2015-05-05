@@ -1,18 +1,26 @@
 #include "lms/imaging/find/line.h"
 #include "lms/imaging/find/line_point.h"
+#include <lms/imaging/graphics.h>
 #include <cmath>
+#include <lms/imaging/draw_debug.h>
 #include <algorithm>
 namespace lms{
 namespace imaging{
 namespace find{
 //initialsuche wenn man davor noch nichts gefunden hat
-bool Line::find(Pixel &startPoint, int searchLength, float searchAngle,int minWidth,int maxWidth, int sobelThreshold,Image &gaussBuffer){
+bool Line::find(Pixel &startPoint, int searchLength, float searchAngle, int minWidth,int maxWidth, int sobelThreshold,Image &gaussBuffer DRAWDEBUG){
     //clear old stuff
     points.clear();
     //find first point
     LinePoint initPoint;
-    if(!initPoint.find(startPoint, searchLength, searchAngle,minWidth,maxWidth, sobelThreshold,gaussBuffer))
+    //Draw red cross
+    DRAWCROSS(startPoint.x,startPoint.y,255,0,0);
+    if(!initPoint.find(startPoint, searchLength, searchAngle,minWidth,maxWidth, sobelThreshold,gaussBuffer DRAWDEBUG_ARG)){
+        //wasn't able to find a start-point :(
         return false;
+    }
+
+    //found start point -> ty to extend the line
     int maxSteps = 100;
     float stepLength = 10;
     //Wie entscheidet man, in welche richtung man erweitern möchte?
@@ -175,7 +183,7 @@ void Line::extendVerifiedLine(int stepsizeX, int stepsizeY){
     */
 }
 
-int Line::extend(LinePoint &start, bool direction,int stepLengthMin, int stepLengthMax,float lineWidth, float lineLength,Image &gaussBuffer){
+int Line::extend(LinePoint &start, bool direction,int stepLengthMin, int stepLengthMax,float lineWidth, float lineLength,Image &gaussBuffer DRAWDEBUG){
     LinePoint searchPoint = start;
     Pixel pixel;
     pixel.setImage(start.high_low.getImage());
@@ -205,7 +213,7 @@ int Line::extend(LinePoint &start, bool direction,int stepLengthMin, int stepLen
         //TODO sobel magic number
         int sobelThreshold = 100;
         //2 and 3 are magic numbers :)
-        if(searchPoint.find(pixel,lineWidth*3,start.getAngle(),lineWidth/2,lineWidth*2,sobelThreshold,gaussBuffer)){
+        if(searchPoint.find(pixel,lineWidth*3,start.getAngle(),lineWidth/2,lineWidth*2,sobelThreshold,gaussBuffer DRAWDEBUG_ARG)){
             //found a new point, search for next one
 
         }else{

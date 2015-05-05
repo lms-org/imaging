@@ -4,6 +4,7 @@
 
 #include "lms/imaging/find/pixel.h"
 #include <math.h>
+#include <lms/imaging/draw_debug.h>
 
 namespace lms{
 namespace imaging{
@@ -37,7 +38,7 @@ private:
          * @param threshold
          * @return true if the edgePoint was found, if not the contained values like sobelX/Y etc. are just random!
          */
-        bool find(Pixel &startPoint, int searchLength, float searchAngle, EdgeType searchtype, int threshold,Image &gaussBuffer);
+        bool find(Pixel &startPoint, int searchLength, float searchAngle, EdgeType searchtype, int threshold,Image &gaussBuffer DRAWDEBUG);
 
 protected:
         bool confirmEdgePoint(int threshold);

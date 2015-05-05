@@ -6,16 +6,24 @@
 #include <cmath>
 #include <lms/imaging/image_factory.h>
 
+#include <lms/imaging/draw_debug.h>
+#include <iostream>
+
 namespace lms{
 namespace imaging{
 namespace find{
-bool EdgePoint::find(Pixel &startPoint, int searchLength, float searchAngle, EdgeType searchtype, int threshold,Image &gaussBuffer){
+bool EdgePoint::find(Pixel &startPoint, int searchLength, float searchAngle,
+                     EdgeType searchtype, int threshold,Image &gaussBuffer DRAWDEBUG){
     //pointer so it can be set in the bresenhamLine-function
-    bool *found= false;
+    //bool *found= false;
     //end-points for the bresenham-function
     int xMax = startPoint.x+searchLength*cos(searchAngle);
     int yMax = startPoint.y+searchLength*sin(searchAngle);
-    bresenhamLine(startPoint.x,startPoint.y,xMax,yMax,[this,&found,&startPoint,&gaussBuffer,&searchtype,&threshold](int x, int y){
+    bresenhamLine(startPoint.x,startPoint.y,xMax,yMax,[this,/*&found,*/&startPoint,&gaussBuffer,&searchtype,&threshold DRAWDEBUG_CAPTURE](int x, int y){
+
+        //std::cout << "BRES: X AND Y SEARCH "  << x << " " << y <<std::endl;
+        //draw debug point
+        DRAWPOINT(x,y,0,0,255);
         //gauss surrounding
         /*
          * TODO that could be optimized as the next pixel will be inside the gaussed rectangle!
@@ -25,10 +33,11 @@ bool EdgePoint::find(Pixel &startPoint, int searchLength, float searchAngle, Edg
         //sobel pxl
         m_sobelX = op::sobelX(x,y,gaussBuffer);
         m_sobelY = op::sobelY(x,y,gaussBuffer);
+
         //check if gradient of sobel is big enough
         if(pow(m_sobelX,2)+pow(m_sobelY,2) > pow(threshold,2)){
             //found an edge
-            *found = true;
+            //*found = true;
             //set the type
             setType();
             if(type() == searchtype){
@@ -42,7 +51,8 @@ bool EdgePoint::find(Pixel &startPoint, int searchLength, float searchAngle, Edg
         //continue searching points!
         return true;
     });
-    return *found;
+    //return *found;
+    return false;
 }
 
 //setzt high-low oder low-high kante

@@ -63,6 +63,14 @@ void Graphics::drawPolyline(int *x, int *y, int n) {
     }
 }
 
+void Graphics::drawCross(int x,int y){
+    drawPixel(x-1,y);
+    drawPixel(x,y);
+    drawPixel(x+1,y);
+    drawPixel(x,y-1);
+    drawPixel(x,y+1);
+}
+
 BGRAImageGraphics::BGRAImageGraphics(Image &image) : image(image) {}
 
 void BGRAImageGraphics::setColor(ARGBColor color) {
@@ -75,6 +83,5 @@ void BGRAImageGraphics::drawPixel(int x, int y) {
         *(data + x + y * image.width()) = color.value;
     }
 }
-
 }  // namespace imaging
 }  // namespace lms

@@ -28,6 +28,7 @@ set (HEADERS
 	"include/lms/imaging/find/line_point.h"
 	"include/lms/imaging/find/object.h"
 	"include/lms/imaging/find/pixel.h"
+        "include/lms/imaging/draw_debug.h"
 )
 
 include_directories("include")

@@ -4,13 +4,14 @@
 #include <lms/imaging/find/object.h>
 #include <lms/imaging/find/line_point.h>
 #include <deque>
+#include <lms/imaging/draw_debug.h>
 namespace lms{
 namespace imaging{
 namespace find{
 
 class Line{
 public:
-    bool find(Pixel &startPoint, int searchLength, float searchAngle,int minWidth,int maxWidth, int sobelThreshold,Image &gaussBuffer);
+    bool find(Pixel &startPoint, int searchLength, float searchAngle,int minWidth,int maxWidth, int sobelThreshold,Image &gaussBuffer DRAWDEBUG);
 
 protected:
     //TODO use a doubly linked list!
@@ -37,7 +38,7 @@ protected:
 
     int limitAngle(int dir);
     bool initialSearch(Pixel px, uint16_t length, int16_t phi);
-    int extend(LinePoint &start, bool direction,int stepLengthMin, int stepLengthMax,float lineWidth, float lineLength,Image &gaussBuffer);
+    int extend(LinePoint &start, bool direction,int stepLengthMin, int stepLengthMax,float lineWidth, float lineLength,Image &gaussBuffer DRAWDEBUG);
     void extendVerifiedLine(int stepsizeX, int stepsizeY);
     void verifyLastPoints();
     void insertbetween(int maxDist, int stepsizeX, int stepsizeY);

@@ -82,6 +82,8 @@ public:
     virtual void drawRect(int x, int y, int width, int height);
 
     virtual void drawPolyline(int *x, int *y, int n);
+
+    virtual void drawCross(int x, int y);
 };
 
 class BGRAImageGraphics : public Graphics {

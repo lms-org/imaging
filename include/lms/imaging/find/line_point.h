@@ -17,6 +17,7 @@ public:
     bool find(Pixel &startPoint, int searchLength, float searchAngle,int minWidth,int maxWidth, int sobelThreshold,Image &gaussBuffer DRAWDEBUG);
     float getAngle();
     float getSlope();
+    float distance();
 };
 
 } //namepsace find

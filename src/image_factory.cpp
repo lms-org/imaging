@@ -8,6 +8,10 @@ namespace op{
 
 void gaussPxl(const Image &input,Image &output,int x, int y){
     //TODO check if input and output are the same formats
+    if(x < 0 || y < 0 || x > input.width() || y > input.height() || x > output.width() || y > output.height()){
+        std::cout << "YOU FAILED HARD, trying to gauss a pixel that isn't inside the image: " << x << " "<<y << std::endl;
+        return;
+    }
     if(input.format() == Format::GREY){
         int gauss = gaussGrey(input,x,y);
         // set pixel
@@ -201,8 +205,8 @@ int sobelY(int x, int y,const Image &image) {
 
 void gaussBox(const Image &input,Image &output,int xMin, int yMin,int xMax, int yMax){
     for(;xMin <= xMax;xMin++){
-        for(;yMin <= yMax;yMin++){
-            gaussPxl(input,output,xMin,yMin);
+        for(int k = yMin;k <= yMax;k++){
+            gaussPxl(input,output,xMin,k);
         }
     }
 }

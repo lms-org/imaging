@@ -19,8 +19,7 @@ bool EdgePoint::find(Pixel &startPoint, int searchLength, float searchAngle,
     //end-points for the bresenham-function
     int xMax = startPoint.x+searchLength*cos(searchAngle);
     int yMax = startPoint.y+searchLength*sin(searchAngle);
-    std::cout<<"###################################"<<std::endl;
-    bresenhamLine(startPoint.x,startPoint.y,xMax,yMax,[this,&found,&startPoint,&gaussBuffer,&searchtype,&threshold DRAWDEBUG_CAPTURE](int _x, int _y){
+    bresenhamLine(startPoint.x,startPoint.y,xMax,yMax,[this,&found,&searchAngle,&startPoint,&gaussBuffer,&searchtype,&threshold DRAWDEBUG_CAPTURE](int _x, int _y){
         //draw debug point
         DRAWPOINT(_x,_y,0,0,255);
         //gauss surrounding
@@ -32,18 +31,30 @@ bool EdgePoint::find(Pixel &startPoint, int searchLength, float searchAngle,
         //sobel pxl
         m_sobelX = op::sobelX(_x,_y,gaussBuffer);
         m_sobelY = op::sobelY(_x,_y,gaussBuffer);
-        //std::cout <<"x: " << _x <<" sobel: "<< (int)searchtype<< " "  << m_sobelX << " " << m_sobelY <<std::endl;
-        //check if gradient of sobel is big enough
+         //check if gradient of sobel is big enough
         if(pow(m_sobelX,2)+pow(m_sobelY,2) > pow(threshold,2)){
             //found an edge
             //set the type
-            std::cout <<"sobel: "<< (int)searchtype<< " "  << m_sobelX << " " << m_sobelY <<" norm: "<<m_sobelX/8 <<std::endl;
-
             setType();
             if(type() == searchtype){
                 //found an edge you were looking for :)
                 //calculate the angle
-                m_sobelAngle = atan(m_sobelY/m_sobelX);
+
+                m_sobelTangent = atan2(m_sobelY,m_sobelX);
+                /*
+                if(m_sobelX < 0 && m_sobelY < 0){
+                    m_sobelTangent -= M_PI_2l;
+                }else if(m_sobelX < 0 &&m_sobelY > 0){
+                    m_sobelTangent -= M_PI_2l;
+                }
+                */
+                m_sobelNormal = m_sobelTangent;
+                //TODO doesnt care about rotation-count of the searchAngle % PI
+                if(-M_PI_2l <searchAngle < M_PI_2l){
+                    m_sobelNormal+=M_PI_2l;
+                }else{
+                    m_sobelNormal-=M_PI_2l;
+                }
                 this->x = _x;
                 this->y = _y;
                 found = true;
@@ -90,8 +101,13 @@ int EdgePoint::sobelY(){
     m_sobelY;
 }
 
-float EdgePoint::sobelAngle(){
-    return m_sobelAngle;
+
+float EdgePoint::sobelTangent(){
+    return m_sobelTangent;
+}
+
+float EdgePoint::sobelNormal(){
+    return m_sobelNormal;
 }
 
 EdgePoint::EdgeType EdgePoint::type(){

@@ -17,7 +17,8 @@ public:
 private:
     int m_sobelX;
     int m_sobelY;
-    float m_sobelAngle;
+    float m_sobelNormal;
+    float m_sobelTangent;
     EdgeType m_type;
 
     public:
@@ -27,7 +28,8 @@ private:
          * @brief sobelAngle
          * @return the angle from -PI to PI
          */
-        float sobelAngle();
+        float sobelTangent();
+        float sobelNormal();
         EdgeType type();
         /**
          * @brief find

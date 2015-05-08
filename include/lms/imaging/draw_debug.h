@@ -16,6 +16,12 @@
         debug.drawCross(x,y)
     #endif
 
+    #ifndef DRAWLINE
+        #define DRAWLINE(x1,y1,x2,y2,r,g,b)\
+        debug.setColor(lms::imaging::ARGBColor(r,g,b));\
+        debug.drawLine(x1,y1,x2,y2)
+    #endif
+
 	#ifndef DRAWPOINT
         #define DRAWPOINT(x,y,r,g,b)\
         debug.setColor(lms::imaging::ARGBColor(r,g,b));\
@@ -27,6 +33,7 @@
     #define DRAWDEBUG_CAPTURE
     #define DRAWCROSS(x,y,r,g,b)
     #define DRAWPOINT(x,y,r,g,b)
+    #define DRAWLINE(x1,y1,x2,y2)
 #endif
 
 

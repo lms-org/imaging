@@ -17,6 +17,11 @@ bool pnmHelperSave(const Image &image, const std::string &path,
     }
 
     std::ofstream of(path, std::ios::binary);
+
+    if(of.is_open()) {
+        return false;
+    }
+
     of << type << "\n" << image.width() << " " << image.height()
        << " " << 255 << "\n";
 
@@ -33,6 +38,10 @@ bool pnmHelperSave(const Image &image, const std::string &path,
 bool pnmHelperRead(Image &image, const std::string &path,
                    Format checkFormat, const std::string &type) {
     std::ifstream is(path, std::ios::binary);
+
+    if(! is.is_open()) {
+        return false;
+    }
 
     std::string magicLine;
     if(!std::getline(is, magicLine) || magicLine != type) {

@@ -19,22 +19,25 @@ bool LinePoint::find(Pixel &startPoint, int searchLength, float searchAngle,int 
     if(!low_high.find(startPoint, searchLength, searchAngle,EdgePoint::EdgeType::LOW_HIGH, sobelThreshold,gaussBuffer DRAWDEBUG_ARG)){
         return false;
     }
+
+
+    //std::cout <<"sobelVal " << low_high.sobelX() << " " << low_high.sobelY() << "sobelTan: " << low_high.sobelTangent() << " sobelNor: " << low_high.sobelNormal() << std::endl;
     DRAWCROSS(low_high.x,low_high.y,0,255,0);
     //calculate search-values for low_high edge
     //angle of the sobel
     //TODO: Maybe do some error checking on the sobelAngle?
     //TODO we should reduce the search-length
-    std::cout <<"sobel angle! tangent: "<<low_high.sobelTangent() << " normal: " << low_high.sobelNormal() <<std::endl;
     DRAWLINE(low_high.x,low_high.y,low_high.x*10*cos(low_high.sobelNormal()),low_high.y*10*sin(low_high.sobelNormal()),255,255,0);
     DRAWLINE(low_high.x,low_high.y,low_high.x*10*cos(low_high.sobelTangent()),low_high.y*10*sin(low_high.sobelTangent()),0,255,255);
-    if(!high_low.find(low_high, searchLength, low_high.sobelNormal(),EdgePoint::EdgeType::HIGH_LOW, sobelThreshold,gaussBuffer DRAWDEBUG_ARG)){
+    //TODO: Don't know why that doesn't work well! Sobel values are quite bad!
+    //if(!high_low.find(low_high, maxWidth, low_high.sobelNormal(),EdgePoint::EdgeType::HIGH_LOW, sobelThreshold,gaussBuffer DRAWDEBUG_ARG)){
         //high_low edge wasn't found, try to find it in the old searchAngle
-        if(!high_low.find(low_high, searchLength, searchAngle,EdgePoint::EdgeType::HIGH_LOW, sobelThreshold,gaussBuffer DRAWDEBUG_ARG)){
+        if(!high_low.find(low_high, maxWidth, searchAngle,EdgePoint::EdgeType::HIGH_LOW, sobelThreshold,gaussBuffer DRAWDEBUG_ARG)){
             return false;
         }
-    }
+    //}
 
-    DRAWCROSS(high_low.x,high_low.y,0,255,0);
+    DRAWCROSS(high_low.x,high_low.y,255,255,0);
     //found both :)
     //check the length (add min/max Length)
     float _distance = distance();
@@ -45,7 +48,7 @@ bool LinePoint::find(Pixel &startPoint, int searchLength, float searchAngle,int 
 }
 
 float LinePoint::getAngle(){
-    return atan2(low_high.x-high_low.x,low_high.y-high_low.y);
+    return atan2(high_low.y-low_high.y,high_low.x-low_high.x);
 }
 
 float LinePoint::getSlope(){

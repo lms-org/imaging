@@ -20,6 +20,9 @@ bool EdgePoint::find(Pixel &startPoint, int searchLength, float searchAngle,
     int xMax = startPoint.x+searchLength*cos(searchAngle);
     int yMax = startPoint.y+searchLength*sin(searchAngle);
     bresenhamLine(startPoint.x,startPoint.y,xMax,yMax,[this,&found,&searchAngle,&startPoint,&gaussBuffer,&searchtype,&threshold DRAWDEBUG_CAPTURE](int _x, int _y){
+        //check if points are inside the image
+        if(_x < 0 || _x > startPoint.getImage()->width() || _y < 0 || _y >startPoint.getImage()->height())
+            return false;
         //draw debug point
         DRAWPOINT(_x,_y,0,0,255);
         //gauss surrounding
@@ -28,9 +31,15 @@ bool EdgePoint::find(Pixel &startPoint, int searchLength, float searchAngle,
          * That's why we don't need to gauss a rectangle. Gaussing 3 to 5 pixel instead of 9 would ne enough
          */
         op::gaussBox(*startPoint.getImage(),gaussBuffer,_x-1,_y-1,_x+1,_y+1);
+        //for 5x5 sobel
+        //op::gaussBox(*startPoint.getImage(),gaussBuffer,_x-2,_y-2,_x+2,_y+2);
         //sobel pxl
+        //TODO change back to gaussBuffer
         m_sobelX = op::sobelX(_x,_y,gaussBuffer);
         m_sobelY = op::sobelY(_x,_y,gaussBuffer);
+        //5x5 sobel
+        //m_sobelX = op::imageOperator(gaussBuffer,_x,_y,&lms::imaging::op::KERNEL_SOBEL_5_X[0][0],5,5);
+        //m_sobelY = op::imageOperator(gaussBuffer,_x,_y,&lms::imaging::op::KERNEL_SOBEL_5_Y[0][0],5,5);
          //check if gradient of sobel is big enough
         if(pow(m_sobelX,2)+pow(m_sobelY,2) > pow(threshold,2)){
             //found an edge
@@ -40,20 +49,13 @@ bool EdgePoint::find(Pixel &startPoint, int searchLength, float searchAngle,
                 //found an edge you were looking for :)
                 //calculate the angle
 
-                m_sobelTangent = atan2(m_sobelY,m_sobelX);
-                /*
-                if(m_sobelX < 0 && m_sobelY < 0){
-                    m_sobelTangent -= M_PI_2l;
-                }else if(m_sobelX < 0 &&m_sobelY > 0){
-                    m_sobelTangent -= M_PI_2l;
-                }
-                */
-                m_sobelNormal = m_sobelTangent;
+                m_sobelNormal = atan2(m_sobelY,m_sobelX);
+                m_sobelTangent = m_sobelNormal;
                 //TODO doesnt care about rotation-count of the searchAngle % PI
                 if(-M_PI_2l <searchAngle < M_PI_2l){
-                    m_sobelNormal+=M_PI_2l;
+                    m_sobelTangent-=M_PI_2l;
                 }else{
-                    m_sobelNormal-=M_PI_2l;
+                    m_sobelTangent+=M_PI_2l;
                 }
                 this->x = _x;
                 this->y = _y;
@@ -98,7 +100,7 @@ int EdgePoint::sobelX(){
 }
 
 int EdgePoint::sobelY(){
-    m_sobelY;
+    return m_sobelY;
 }
 
 

@@ -36,46 +36,60 @@ bool Line::findPoint(LinePoint &pointToFind,Pixel &startPoint, int searchLength,
     return true;
 }
 
-int Line::extend(LinePoint &start,int sobelThreshold,bool direction,Image &gaussBuffer DRAWDEBUG){
-    LinePoint searchPoint = start;
+int Line::extend(LinePoint &start,int sobelThreshold,bool direction,Image &gaussBuffer DRAWDEBUG,float lineLength){
     Pixel pixel;
     pixel.setImage(start.low_high.getImage());
-    //set start values
-    pixel.x = start.low_high.x;
-    pixel.y = start.low_high.y;
-    std::cout << "IMAGE: "  << pixel.getImage()->width() << " "<< pixel.getImage()->height() <<std::endl;
-    std::cout << "GAUSS_IMAGE: "  << gaussBuffer.width() << " "<< gaussBuffer.height() <<std::endl;
+
+    std::vector<LinePoint> points;
+    points.push_back(start);
 
     float searchStepX;
     float searchStepY;
-    float searchAngle;
+    float searchTangentAngle;
     float currentLength = 0;
-    float stepLengthMax=5;
+    float stepLengthMax=10;
     float stepLengthMin = 5;
     float currentStepLength = 0;
-    float lineWidth = start.distance();
-    float lineLength = 100;
-    if(direction){
-        searchAngle = start.getAngle()+M_PI_2l;
-    }else{
-        searchAngle = start.getAngle()-M_PI_2l;
-    }
-    //move the point along the tangent of the line and afterwards move it from the line so the point isn't already on the line
-    searchStepX = cos(searchAngle)*stepLengthMax-lineWidth*cos(start.getAngle());
-    searchStepY = sin(searchAngle)*stepLengthMax-lineWidth*sin(start.getAngle());
+
     //search as long as the searchLength isn't reached
     while(currentLength < lineLength){
+        //Create new point using the last data
+        LinePoint searchPoint = points[points.size()-1];
+        //get needed stuff
+        float lineWidth = searchPoint.distance();
+
+        pixel.x = searchPoint.low_high.x;
+        pixel.y = searchPoint.low_high.y;
+        float searchNormalAngle = searchPoint.getAngle();
+
+        if(direction){
+            searchTangentAngle = searchNormalAngle-M_PI_2l;
+        }else{
+            searchTangentAngle = searchNormalAngle+M_PI_2l;
+        }
+        //move the point along the tangent of the line and afterwards move it from the line so the point isn't already on the line
+        searchStepX = cos(searchTangentAngle)*stepLengthMax-3*lineWidth*cos(searchNormalAngle);
+        searchStepY = sin(searchTangentAngle)*stepLengthMax-3*lineWidth*sin(searchNormalAngle);
+        /*
+        std::cout<< "posX: " << searchPoint.low_high.x << " " << searchPoint.high_low.x << std::endl;
+        std::cout<< "posY: " << searchPoint.low_high.y << " " << searchPoint.high_low.y << std::endl;
+        std::cout <<"normal : " << searchNormalAngle <<std::endl;
+        std::cout << "deltaX " << cos(searchTangentAngle)*stepLengthMax << " " <<lineWidth*cos(searchNormalAngle) << std::endl;
+        std::cout << "deltaY " << sin(searchTangentAngle)*stepLengthMax << " " <<lineWidth*sin(searchNormalAngle) << std::endl;
+        */
 
         //try to find a new point
         //calculate new searchPoint
         if(!pixel.move(searchStepX,searchStepY)){
             //out of the image!
-            //TODO return
             return 0;
         }
         //2 and 3 are magic numbers :)
-        if(findPoint(searchPoint,pixel,lineWidth*3,start.getAngle(),lineWidth/2,lineWidth*2,sobelThreshold,gaussBuffer DRAWDEBUG_ARG)){
+        if(findPoint(searchPoint,pixel,lineWidth*5,searchNormalAngle,lineWidth/2,lineWidth*2,sobelThreshold,gaussBuffer DRAWDEBUG_ARG)){
             //TODO
+            currentLength += searchPoint.low_high.distance(points[points.size()-1].low_high);
+            points.push_back(searchPoint);
+
         }else{
             //found no point, decrease length
             //TODO add some better algo.
@@ -88,6 +102,7 @@ int Line::extend(LinePoint &start,int sobelThreshold,bool direction,Image &gauss
             }
         }
     }
+    std::cout << "DISTANCE " <<lineLength <<std::endl;
 return 0;
 }
 

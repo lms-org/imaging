@@ -33,7 +33,7 @@ void Pixel::setImage(Image *image){
 }
 
 float Pixel::distance(Pixel &pixel){
-    return sqrt((x-pixel.x)^2+(y-pixel.y)^2);
+    return sqrt(pow(x-pixel.x,2)+pow(y-pixel.y,2));
 }
 } //namepsace find
 } //namespace imaging

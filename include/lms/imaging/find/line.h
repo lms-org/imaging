@@ -39,7 +39,7 @@ protected:
 
     int limitAngle(int dir);
     bool initialSearch(Pixel px, uint16_t length, int16_t phi);
-    int extend(LinePoint &start,int sobelThreshold,bool direction,Image &gaussBuffer DRAWDEBUG);
+    int extend(LinePoint &start,int sobelThreshold,bool direction,Image &gaussBuffer DRAWDEBUG,float lineLength = INFINITY);
     void extendVerifiedLine(int stepsizeX, int stepsizeY);
     void verifyLastPoints();
     void insertbetween(int maxDist, int stepsizeX, int stepsizeY);

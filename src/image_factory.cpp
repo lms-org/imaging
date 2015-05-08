@@ -9,7 +9,7 @@ namespace op{
 void gaussPxl(const Image &input,Image &output,int x, int y){
     //TODO check if input and output are the same formats
     if(x < 0 || y < 0 || x > input.width() || y > input.height() || x > output.width() || y > output.height()){
-        std::cout << "YOU FAILED HARD, trying to gauss a pixel that isn't inside the image: " << x << " "<<y << std::endl;
+        //std::cout << "YOU FAILED HARD, trying to gauss a pixel that isn't inside the image: " << x << " "<<y << std::endl;
         return;
     }
     if(input.format() == Format::GREY){
@@ -162,20 +162,20 @@ int sobelX(int x, int y, const Image &image) {
     int width = image.width();
 
     int valueSobelX = 0;
-    int y_index = width * (validateY(y + (0 - 1),height,true));
+    int y_index = width * (validateY(y -1,height,true));
 
-    valueSobelX -= *(data + y_index + validateX(x + (0-1),width,true));
-    valueSobelX += *(data + y_index + validateX(x + (2-1),width,true));
+    valueSobelX -= *(data + y_index + validateX(x -1,width,true));
+    valueSobelX += *(data + y_index + validateX(x + 1,width,true));
 
-    y_index = width * (validateY(y + (1 - 1),height,true));
+    y_index = width * (validateY(y,height,true));
 
-    valueSobelX -= *(data + y_index + validateX(x + (0-1),width,true)) << 1;
-    valueSobelX += *(data + y_index + validateX(x + (2-1),width,true)) << 1;
+    valueSobelX -= *(data + y_index + validateX(x -1,width,true)) << 1;
+    valueSobelX += *(data + y_index + validateX(x +1,width,true)) << 1;
 
-    y_index = width * (validateY(y + (2 - 1),height,true));
+    y_index = width * (validateY(y +1,height,true));
 
-    valueSobelX -= *(data + y_index + validateX(x + (0-1),width,true));
-    valueSobelX += *(data + y_index + validateX(x + (2-1),width,true));
+    valueSobelX -= *(data + y_index + validateX(x -1,width,true));
+    valueSobelX += *(data + y_index + validateX(x +1,width,true));
     return valueSobelX;
 }
 
@@ -186,13 +186,13 @@ int sobelY(int x, int y,const Image &image) {
     int width = image.width();
 
     int valueSobelY = 0;
-    int y_index = width * (validateY(y + (0 - 1),height,true));
+    int y_index = width * (validateY(y -1,height,true));
 
     valueSobelY += *(data + y_index + validateX(x + (0-1),width,true));
     valueSobelY += *(data + y_index + validateX(x + (1-1),width,true)) << 1;
     valueSobelY += *(data + y_index + validateX(x + (2-1),width,true));
 
-    y_index = width * (validateY(y + (2 - 1),height,true));
+    y_index = width * (validateY(y +1,height,true));
 
     valueSobelY -= *(data + y_index + validateX(x + (0-1),width,true));
     valueSobelY -= *(data + y_index + validateX(x + (1-1),width,true)) << 1;

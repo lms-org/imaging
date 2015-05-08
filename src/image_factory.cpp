@@ -68,7 +68,8 @@ void sobelX(const Image &input, Image &output) {
     //TODO error checking
     for(int x = 0; x < input.width();x++){
         for(int y = 0; y< input.height(); y++){
-            *(output.data()+y*input.width()+x)=sobelX(x,y,input);
+            //normalize img
+            *(output.data()+y*input.width()+x)=sobelX(x,y,input)/8+128;
         }
     }
 }
@@ -76,7 +77,7 @@ void sobelY(const Image &input, Image &output) {
     //TODO error checking
     for(int x = 0; x < input.width();x++){
         for(int y = 0; y< input.height(); y++){
-            *(output.data()+y*input.width()+x)=sobelY(x,y,input);
+            *(output.data()+y*input.width()+x)=sobelY(x,y,input)/8+128;
         }
     }
 }
@@ -171,7 +172,6 @@ int sobelX(int x, int y, const Image &image) {
 
     valueSobelX -= *(data + y_index + validateX(x + (0-1),width,true));
     valueSobelX += *(data + y_index + validateX(x + (2-1),width,true));
-
     return valueSobelX;
 }
 

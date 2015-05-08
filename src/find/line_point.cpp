@@ -10,8 +10,9 @@ namespace find{
 
 bool LinePoint::find(Pixel &startPoint, int searchLength, float searchAngle,int minWidth,int maxWidth, int sobelThreshold,Image &gaussBuffer DRAWDEBUG) {
     //try to find first point, if it fails return as no LinePoint can be found
-    if(!low_high.find(startPoint, searchLength, searchAngle,EdgePoint::EdgeType::LOW_HIGH, sobelThreshold,gaussBuffer DRAWDEBUG_ARG))
+    if(!low_high.find(startPoint, searchLength, searchAngle,EdgePoint::EdgeType::LOW_HIGH, sobelThreshold,gaussBuffer DRAWDEBUG_ARG)){
         return false;
+    }
     DRAWCROSS(low_high.x,low_high.y,0,255,0);
     //calculate search-values for low_high edge
     //angle of the sobel

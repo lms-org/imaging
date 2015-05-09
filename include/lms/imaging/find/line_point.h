@@ -13,11 +13,25 @@ namespace find{
 class LinePoint {
 
 public:
+
+    struct LinePointParam:public EdgePoint::EdgePointParam{
+    LinePointParam():lineWidthMin(0),lineWidthMax(0){
+    }
+        float lineWidthMin;
+        float lineWidthMax;
+    };
+
+    void setParam(const LinePointParam &param);
+    bool find(const LinePointParam &param DRAWDEBUG_PARAM);
+    bool find(DRAWDEBUG_PARAM_N);
+
     EdgePoint low_high, high_low;
-    bool find(Pixel &startPoint, int searchLength, float searchAngle,int minWidth,int maxWidth, int sobelThreshold,Image &gaussBuffer DRAWDEBUG);
     float getAngle();
     float getSlope();
     float distance();
+
+private:
+    LinePointParam m_LinePointParam;
 };
 
 } //namepsace find

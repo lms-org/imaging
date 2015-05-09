@@ -9,7 +9,7 @@ set ( SOURCES
 ##########find
 	"src/find/edge_point.cpp"
 	"src/find/line.cpp"
-        "src/find/line_point.cpp"
+     "src/find/line_point.cpp"
 	"src/find/pixel.cpp"
 
 )
@@ -28,7 +28,7 @@ set (HEADERS
 	"include/lms/imaging/find/line_point.h"
 	"include/lms/imaging/find/object.h"
 	"include/lms/imaging/find/pixel.h"
-        "include/lms/imaging/draw_debug.h"
+    "include/lms/imaging/draw_debug.h"
 )
 
 include_directories("include")

@@ -97,5 +97,9 @@ const std::uint8_t* Image::data() const {
     return m_data.get();
 }
 
+bool Image::inside(int x, int y){
+    return (x >= 0 && x < width() && y >= 0 && y < height());
+}
+
 } // namespace imaging
 } // namespace lms

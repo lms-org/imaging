@@ -15,12 +15,12 @@ bool Pixel::insideImage() {
 }
 
 bool Pixel::move(int dx, int dy) {
-    if(x >= getImage()->width() || y >= getImage()->height()) {
-        return false;
+    if(getImage()->inside(x + dx, y +dy)){
+        x += dx;
+        y += dy;
+        return true;
     }
-    x += dx;
-    y += dy;
-    return true;
+    return false;
 }
 
 

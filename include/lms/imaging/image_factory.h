@@ -12,6 +12,10 @@ namespace op{
 //##################################################
 //################FILTER
 //##################################################
+/*
+ * How to use it:
+ * op::imageOperator(imageTarget,x,y,&lms::imaging::op::KERNEL_SOBEL_5_X[0][0],5,5)
+ */
 const double KERNEL_GAUSS_5[5][5] = {{1,4,6,4,1},{4,16,24,16,4},{6,24,36,24,6},{4,16,24,16,4},{1,4,6,4,1}};
 const int GAUSS_5_DIV = 256;
 const double KERNEL_SOBEL_3_Y[3][3] = {{1, 2, 1}, {0, 0, 0}, {-1, -2, -1}};

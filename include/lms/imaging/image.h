@@ -131,6 +131,14 @@ public:
     int size() const;
 
     /**
+     * @brief inside
+     * @param x
+     * @param y
+     * @return true if the pixel is inside the image
+     */
+    bool inside(int x, int y);
+
+    /**
      * @brief Return the capacity of the image in bytes.
      * @return
      */

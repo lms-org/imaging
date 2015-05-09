@@ -5,6 +5,7 @@
 #include "lms/imaging/find/pixel.h"
 #include <math.h>
 #include <lms/imaging/draw_debug.h>
+#include "lms/deprecated.h"
 
 namespace lms{
 namespace imaging{
@@ -14,7 +15,22 @@ class EdgePoint: public Pixel{
 public:
     enum class EdgeType {LOW_HIGH, HIGH_LOW, PLANE};
 
+    struct EdgePointParam{
+        EdgePointParam():x(0),y(0),target(nullptr),searchLength(0),searchAngle(0),searchType(EdgeType::PLANE),sobelThreshold(0),gaussBuffer(nullptr){
+        }
+
+        int x;
+        int y;
+        const Image *target;
+        float searchLength;
+        float searchAngle;
+        EdgeType searchType;
+        int sobelThreshold;
+        Image *gaussBuffer;
+    };
+
 private:
+    EdgePointParam m_searchParam;
     int m_sobelX;
     int m_sobelY;
     float m_sobelNormal;
@@ -22,6 +38,9 @@ private:
     EdgeType m_type;
 
     public:
+        void setSearchParam(const EdgePointParam &searchParam);
+        bool find(DRAWDEBUG_PARAM_N);
+        bool find(const EdgePointParam &searchParam DRAWDEBUG_PARAM);
         int sobelX();
         int sobelY();
         /**
@@ -31,16 +50,6 @@ private:
         float sobelTangent();
         float sobelNormal();
         EdgeType type();
-        /**
-         * @brief find
-         * @param startPoint starting point
-         * @param searchLength length of the line used to find an edge
-         * @param searchAngle angle in radians
-         * @param searchtype
-         * @param threshold
-         * @return true if the edgePoint was found, if not the contained values like sobelX/Y etc. are just random!
-         */
-        bool find(Pixel &startPoint, int searchLength, float searchAngle, EdgeType searchtype, int threshold,Image &gaussBuffer DRAWDEBUG);
 
 protected:
         bool confirmEdgePoint(int threshold);

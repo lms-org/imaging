@@ -7,36 +7,42 @@
 namespace lms{
 namespace imaging{
 namespace find{
-//initialsuche wenn man davor noch nichts gefunden hat
-bool Line::find(Pixel &startPoint, int searchLength, float searchAngle, int minWidth,int maxWidth, int sobelThreshold,Image &gaussBuffer DRAWDEBUG){
-    //clear old stuff
-    points.clear();
-    LinePoint lp;
-    findPoint(lp,startPoint,searchLength,searchAngle,minWidth,maxWidth,sobelThreshold,gaussBuffer DRAWDEBUG_ARG);
 
-    //found start point -> ty to extend the line
-    int maxSteps = 100;
-    float stepLength = 10;
-    extend(lp,sobelThreshold,true,gaussBuffer DRAWDEBUG_ARG);
-    //extend(lp,sobelThreshold,true,gaussBuffer DRAWDEBUG_ARG);
-    //TODO extend above
-    //extend(initPoint,false,maxSteps,stepLength);
-    return false;
-
+bool Line::find(LineParam lineParam DRAWDEBUG_PARAM){
+    setParam(lineParam);
+    return find(DRAWDEBUG_ARG_N);
 }
 
-bool Line::findPoint(LinePoint &pointToFind,Pixel &startPoint, int searchLength, float searchAngle, int minWidth,int maxWidth, int sobelThreshold,Image &gaussBuffer DRAWDEBUG){
+void Line::setParam(const LineParam &lineParam){
+    m_LineParam = lineParam;
+}
+bool Line::find(DRAWDEBUG_PARAM_N){
+    points.clear();
+    LinePoint &lp = points[points.size()];
+    if(findPoint(lp,m_LineParam DRAWDEBUG_ARG)){
+        //didn't found the receptor point!
+        return false;
+    }
+
+    //found receptor point -> try to extend the line
+    extend(lp,true DRAWDEBUG_ARG);
+    extend(lp,false DRAWDEBUG_ARG);
+    return true;
+}
+
+
+bool Line::findPoint(LinePoint &pointToFind,LinePoint::LinePointParam linePointParam DRAWDEBUG_PARAM){
     //find first point
     //Draw red cross
-    DRAWCROSS(startPoint.x,startPoint.y,255,0,0);
-    if(!pointToFind.find(startPoint, searchLength, searchAngle,minWidth,maxWidth, sobelThreshold,gaussBuffer DRAWDEBUG_ARG)){
+    DRAWCROSS(linePointParam.x,linePointParam.y,255,0,0);
+    if(!pointToFind.find(linePointParam DRAWDEBUG_ARG)){
         //wasn't able to find a start-point :(
         return false;
     }
     return true;
 }
 
-int Line::extend(LinePoint &start,int sobelThreshold,bool direction,Image &gaussBuffer DRAWDEBUG,float lineLength){
+int Line::extend(LinePoint &start,bool direction DRAWDEBUG){
     Pixel pixel;
     pixel.setImage(start.low_high.getImage());
 
@@ -52,7 +58,7 @@ int Line::extend(LinePoint &start,int sobelThreshold,bool direction,Image &gauss
     float currentStepLength = 0;
 
     //search as long as the searchLength isn't reached
-    while(currentLength < lineLength){
+    while(currentLength < m_LineParam.maxLength){
         //Create new point using the last data
         LinePoint searchPoint = points[points.size()-1];
         //get needed stuff
@@ -84,8 +90,14 @@ int Line::extend(LinePoint &start,int sobelThreshold,bool direction,Image &gauss
             //out of the image!
             return 0;
         }
-        //2 and 3 are magic numbers :)
-        if(findPoint(searchPoint,pixel,lineWidth*5,searchNormalAngle,lineWidth/2,lineWidth*2,sobelThreshold,gaussBuffer DRAWDEBUG_ARG)){
+        //TODO that could be made more efficient
+        LinePoint::LinePointParam param = m_LineParam;
+        param.x = pixel.x;
+        param.y = pixel.y;
+        param.searchLength = m_LineParam.lineWidthMax*5;
+        param.searchAngle = searchNormalAngle;
+
+        if(findPoint(searchPoint,param DRAWDEBUG_ARG)){
             //TODO
             currentLength += searchPoint.low_high.distance(points[points.size()-1].low_high);
             points.push_back(searchPoint);
@@ -102,12 +114,11 @@ int Line::extend(LinePoint &start,int sobelThreshold,bool direction,Image &gauss
             }
         }
     }
-    std::cout << "DISTANCE " <<lineLength <<std::endl;
 return 0;
 }
 
 
-
+//TODO remove
 int Line::calcDistance(LinePoint &first, LinePoint &next) {
 
     int dx = first.low_high.x - next.low_high.x;
@@ -116,7 +127,7 @@ int Line::calcDistance(LinePoint &first, LinePoint &next) {
     return sqrt(dx*dx + dy*dy);
 
 }
-
+//TODO change to radians form PI to -PI
 int Line::limitAngle(int dir) {
     while (dir > 360)
         dir = dir - 360;

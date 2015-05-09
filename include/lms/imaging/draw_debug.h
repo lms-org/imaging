@@ -5,9 +5,13 @@
 
 #include <lms/imaging/graphics.h>
 	#ifndef DRAWDEBUG
+        /**deprecated use DRAWDEBUG_PARAM insead*/
         #define DRAWDEBUG ,lms::imaging::Graphics &debug
         #define DRAWDEBUG_ARG ,debug
+        #define DRAWDEBUG_ARG_N debug
         #define DRAWDEBUG_CAPTURE ,&debug
+        #define DRAWDEBUG_PARAM ,lms::imaging::Graphics &debug
+        #define DRAWDEBUG_PARAM_N lms::imaging::Graphics &debug
 	#endif
 
 	#ifndef DRAWCROSS
@@ -34,6 +38,8 @@
     #define DRAWCROSS(x,y,r,g,b)
     #define DRAWPOINT(x,y,r,g,b)
     #define DRAWLINE(x1,y1,x2,y2)
+    #define DRAWDEBUG_PARAM
+    #define DRAWDEBUG_PARAM_N
 #endif
 
 

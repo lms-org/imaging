@@ -8,43 +8,69 @@ namespace lms{
 namespace imaging{
 namespace find{
 
-float LinePoint::distance(){
-    return low_high.distance(high_low);
+
+
+void LinePoint::setParam(const LinePointParam &param){
+    m_LinePointParam = param;
 }
 
-bool LinePoint::find(Pixel &startPoint, int searchLength, float searchAngle,int minWidth,int maxWidth, int sobelThreshold,Image &gaussBuffer DRAWDEBUG) {
+bool LinePoint::find(const LinePointParam &param DRAWDEBUG_PARAM){
+    setParam(param);
+    return find(DRAWDEBUG_ARG_N);
+}
+
+bool LinePoint::find(DRAWDEBUG_PARAM_N){
     //try to find first point, if it fails return as no LinePoint can be found
-    low_high.setImage(startPoint.getImage());
-    high_low.setImage(startPoint.getImage());
-    if(!low_high.find(startPoint, searchLength, searchAngle,EdgePoint::EdgeType::LOW_HIGH, sobelThreshold,gaussBuffer DRAWDEBUG_ARG)){
+    EdgePoint::EdgePointParam param = m_LinePointParam;
+    //TODO those two methods are quite bad
+    low_high.setImage(const_cast<lms::imaging::Image*>(param.target));
+    high_low.setImage(const_cast<lms::imaging::Image*>(param.target));
+
+    //the first searchPoint is already set in the params, just need to set the EdgeType
+    m_LinePointParam.searchType = EdgePoint::EdgeType::LOW_HIGH;
+    //try to find the first edge
+    if(!low_high.find(m_LinePointParam DRAWDEBUG_ARG)){
+        //no edge found :(
         return false;
     }
 
-
-    //std::cout <<"sobelVal " << low_high.sobelX() << " " << low_high.sobelY() << "sobelTan: " << low_high.sobelTangent() << " sobelNor: " << low_high.sobelNormal() << std::endl;
-    DRAWCROSS(low_high.x,low_high.y,0,255,0);
-    //calculate search-values for low_high edge
-    //angle of the sobel
+    //set new values for second edge
+    param.searchType = EdgePoint::EdgeType::HIGH_LOW;
+    param.x = low_high.x;
+    param.y = low_high.y;
     //TODO: Maybe do some error checking on the sobelAngle?
-    //TODO we should reduce the search-length
+    param.searchAngle = low_high.sobelNormal();
+    //TODO we could reduce the search-length
+    //param.searchLength = ?
+
+    //draw the found point
+    DRAWCROSS(low_high.x,low_high.y,0,255,0);
+
+    //draw the tangents
     DRAWLINE(low_high.x,low_high.y,low_high.x*10*cos(low_high.sobelNormal()),low_high.y*10*sin(low_high.sobelNormal()),255,255,0);
     DRAWLINE(low_high.x,low_high.y,low_high.x*10*cos(low_high.sobelTangent()),low_high.y*10*sin(low_high.sobelTangent()),0,255,255);
     //TODO: Don't know why that doesn't work well! Sobel values are quite bad!
-    //if(!high_low.find(low_high, maxWidth, low_high.sobelNormal(),EdgePoint::EdgeType::HIGH_LOW, sobelThreshold,gaussBuffer DRAWDEBUG_ARG)){
+    if(!high_low.find(param DRAWDEBUG_ARG)){
         //high_low edge wasn't found, try to find it in the old searchAngle
-        if(!high_low.find(low_high, maxWidth, searchAngle,EdgePoint::EdgeType::HIGH_LOW, sobelThreshold,gaussBuffer DRAWDEBUG_ARG)){
+        param.searchAngle = m_LinePointParam.searchAngle;
+        if(!high_low.find(m_LinePointParam DRAWDEBUG_ARG)){
             return false;
         }
-    //}
-
+    }
+    //found both low->high and high->low edge!
     DRAWCROSS(high_low.x,high_low.y,255,255,0);
-    //found both :)
-    //check the length (add min/max Length)
-    float _distance = distance();
-    if(_distance < minWidth || _distance > maxWidth)
-        return false;
-    return true;
 
+    //check the width of the linePoint is valid
+    float _distance = distance();
+    if(_distance < m_LinePointParam.lineWidthMin || _distance > m_LinePointParam.lineWidthMax){
+        //width is not valid :(
+        return false;
+    }
+    return true;
+}
+
+float LinePoint::distance(){
+    return low_high.distance(high_low);
 }
 
 float LinePoint::getAngle(){

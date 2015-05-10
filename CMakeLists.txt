@@ -6,6 +6,7 @@ set ( SOURCES
 	"src/pnm.cpp"
 	"src/image_factory.cpp"
     "src/graphics.cpp"
+    "src/warp.cpp"
 ##########find
 	"src/find/edge_point.cpp"
 	"src/find/line.cpp"
@@ -22,6 +23,12 @@ set (HEADERS
 	"include/lms/imaging/pnm.h"
 	"include/lms/imaging/image_factory.h"
     "include/lms/imaging/graphics.h"
+    "include/lms/imaging/warp.h"
+##########magic
+    "include/lms/imaging/magic/n2d.h"
+    "include/lms/imaging/magic/lutx.h"
+    "include/lms/imaging/magic/luty.h"
+    "include/lms/imaging/magic/cali_ab.h"
 ##########find
 	"include/lms/imaging/find/edge_point.h"
 	"include/lms/imaging/find/line.h"

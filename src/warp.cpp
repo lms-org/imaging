@@ -111,5 +111,43 @@ bool n2d(const float & xn, const float & yn, float & xdist, float & ydist) {
     return true;
 }
 
+void imageV2C(const Image &input, Image &output) {
+    if(input.width() != 320 || input.height() != 240 ||
+            input.format() != Format::GREY) {
+        //return false;
+    }
+
+    const int textureSize = 512;
+    const int planeSize = 5;
+    output.resize(textureSize, textureSize, Format::GREY);
+
+    vertex2f in;
+    vertex2i out;
+    bool success;
+    std::uint8_t color;
+
+    for(int y = 0; y < textureSize; y++) {
+        for(int x = 0; x < textureSize; x++) {
+            in[0] = planeSize / (float)textureSize * (float) x;
+            in[1] = -planeSize / (float)textureSize
+                    * (float)(y - (float)textureSize / 2.);
+
+            success = V2C(&in, &out);
+
+            //std::cout << x << " " << y << " -> " << out[0] << " " << out[1] << std::endl;
+
+            if(success && out[0] >= 0 && out[0] < input.width()
+                    && out[1] >= 0 && out[1] < input.height()) {
+                color = *(input.data() + out[1] * input.width() + out[0]);
+            } else {
+                color = 127;
+            }
+            *(output.data() + y * output.width() + x) = color;
+        }
+    }
+
+    //return true;
+}
+
 }  // namespace imaging
 }  // namespace lms

@@ -4,6 +4,8 @@
 #include <cstdint>
 #include <array>
 
+#include "lms/imaging/image.h"
+
 // DIRTY CODE -> DO NOT READ
 
 namespace lms {
@@ -32,6 +34,8 @@ float LP_Angle_to_rad(int8_t);
 int8_t rad_to_angle_lp(float);
 
 bool n2d(const float & xn, const float & yn, float & xdist, float & ydist);
+
+void imageV2C(const Image &input, Image &output);
 
 }  // namespace imaging
 }  // namespace lms

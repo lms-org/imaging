@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <cmath>
 #include <lms/imaging/image_factory.h>
+#include <lms/extra/math.h>
 
 #include <lms/imaging/draw_debug.h>
 #include <iostream>
@@ -51,7 +52,7 @@ bool EdgePoint::find(DRAWDEBUG_PARAM_N){
             std::cout << "POS: " << _x  << " " << _y << std::endl;
         }
         */
-         //check if gradient of sobel is big enough
+        //check if gradient of sobel is big enough
         if(pow(m_sobelX,2)+pow(m_sobelY,2) > pow(m_searchParam.sobelThreshold,2)){
             //found an edge
             //set the type
@@ -82,22 +83,41 @@ bool EdgePoint::find(DRAWDEBUG_PARAM_N){
 }
 
 //setzt high-low oder low-high kante
+//TODO sucks if the searchAngle is 0/180 and sobelY dominates and vise versa
 EdgePoint::EdgeType EdgePoint::setType() {
     if(abs(sobelX()) > abs(sobelY())){
-        if(sobelX() > 0){
-            m_type = EdgeType::LOW_HIGH;
+       if(sobelX() > 0){
+            if(cos(m_searchParam.searchAngle) >= 0)
+                m_type = EdgeType::LOW_HIGH;
+            else{
+                m_type = EdgeType::HIGH_LOW;
+            }
         }else{
-            m_type = EdgeType::HIGH_LOW;
+            if(cos(m_searchParam.searchAngle) >= 0)
+                m_type = EdgeType::HIGH_LOW;
+            else{
+                m_type = EdgeType::LOW_HIGH;
+            }
         }
     }else if(sobelX() == 0 && sobelY() == 0){
         m_type = EdgeType::PLANE;
     }else{
-        if(sobelY() > 0){
-            m_type = EdgeType::LOW_HIGH;
+        if(sobelY()>0){
+            if(lms::math::sgn(sin(m_searchParam.searchAngle)))
+                m_type = EdgeType::LOW_HIGH;
+            else{
+                m_type = EdgeType::HIGH_LOW;
+            }
         }else{
-            m_type = EdgeType::HIGH_LOW;
+            if(!lms::math::sgn(sin(m_searchParam.searchAngle)))
+                m_type = EdgeType::LOW_HIGH;
+            else{
+                m_type = EdgeType::HIGH_LOW;
+            }
         }
     }
+
+
 
     return m_type;
 }

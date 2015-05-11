@@ -15,10 +15,14 @@ class LinePoint {
 public:
 
     struct LinePointParam:public EdgePoint::EdgePointParam{
-    LinePointParam():lineWidthMin(0),lineWidthMax(0){
+    LinePointParam():lineWidthMin(0),lineWidthMax(0),useSobel(false){
     }
         float lineWidthMin;
         float lineWidthMax;
+        /**
+         * @brief useSobel if true the sobel-angle will be used to find the second point (not recommended!)
+         */
+        bool useSobel;
     };
 
     void setParam(const LinePointParam &param);

@@ -45,17 +45,24 @@ bool LinePoint::find(DRAWDEBUG_PARAM_N){
     //draw the found point
     DRAWCROSS(low_high.x,low_high.y,0,255,0);
 
-    //draw the tangents
+    //draw the tangent/normal of the sobel
     //DRAWLINE(low_high.x,low_high.y,low_high.x*10*cos(low_high.sobelNormal()),low_high.y*10*sin(low_high.sobelNormal()),255,255,0);
     //DRAWLINE(low_high.x,low_high.y,low_high.x*10*cos(low_high.sobelTangent()),low_high.y*10*sin(low_high.sobelTangent()),0,255,255);
+
     //TODO: Don't know why that doesn't work well! Sobel values are quite bad!
-    //if(!high_low.find(param DRAWDEBUG_ARG)){
+    bool found  = false;
+    if(m_LinePointParam.useSobel){
+        if(!high_low.find(param DRAWDEBUG_ARG)){
+            found = true;
+        }
+    }
+    if(!found){
         //high_low edge wasn't found, try to find it in the old searchAngle
         param.searchAngle = m_LinePointParam.searchAngle;
         if(!high_low.find(param DRAWDEBUG_ARG)){
             return false;
         }
-    //}
+    }
     //found both low->high and high->low edge!
     DRAWCROSS(high_low.x,high_low.y,255,255,0);
 

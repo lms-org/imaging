@@ -25,9 +25,8 @@ bool Line::find(DRAWDEBUG_PARAM_N){
         return false;
     }
     points.push_front(lp);
-
     //found receptor point -> try to extend the line
-    //extend(lp,true DRAWDEBUG_ARG);
+    extend(lp,true DRAWDEBUG_ARG);
     extend(lp,false DRAWDEBUG_ARG);
     return true;
 }
@@ -37,14 +36,10 @@ bool Line::findPoint(LinePoint &pointToFind,LinePoint::LinePointParam linePointP
     //find first point
     //Draw red cross
     DRAWCROSS(linePointParam.x,linePointParam.y,255,0,0);
-    if(!pointToFind.find(linePointParam DRAWDEBUG_ARG)){
-        //wasn't able to find a start-point :(
-        return false;
-    }
-    return true;
+    return pointToFind.find(linePointParam DRAWDEBUG_ARG);
 }
 
-int Line::extend(LinePoint &start,bool direction DRAWDEBUG){
+void Line::extend(LinePoint &start,bool direction DRAWDEBUG){
     Pixel pixel;
     pixel.setImage(start.low_high.getImage());
 
@@ -54,8 +49,10 @@ int Line::extend(LinePoint &start,bool direction DRAWDEBUG){
     float currentLength = 0;
     float currentStepLength = m_LineParam.stepLengthMax;
 
+    bool found = false;
     //search as long as the searchLength isn't reached
     while(currentLength < m_LineParam.maxLength){
+        found = false;
         //Create new point using the last data
         LinePoint searchPoint;
         if(direction){
@@ -97,27 +94,28 @@ int Line::extend(LinePoint &start,bool direction DRAWDEBUG){
 
         //try to find a new point
         //calculate new searchPoint
-        if(!pixel.move(searchStepX,searchStepY)){
-            //out of the image!
-            return 0;
-        }
-        //TODO that could be made more efficient
-        LinePoint::LinePointParam param = m_LineParam;
-        param.x = pixel.x;
-        param.y = pixel.y;
-        param.searchLength = m_LineParam.lineWidthMax*3;
-        param.searchAngle = searchNormalAngle;
+        if(pixel.move(searchStepX,searchStepY)){
+            //TODO that could be made more efficient
+            LinePoint::LinePointParam param = m_LineParam;
+            param.x = pixel.x;
+            param.y = pixel.y;
+            param.searchLength = m_LineParam.lineWidthMax*3;
+            param.searchAngle = searchNormalAngle;
 
-        if(findPoint(searchPoint,param DRAWDEBUG_ARG)){
-            if(direction){
-                currentLength += searchPoint.low_high.distance(points[points.size()-1].low_high);
-                points.push_back(searchPoint);
-            }else{
-                currentLength += searchPoint.low_high.distance(points[0].low_high);
-                points.push_front(searchPoint);
+
+            if(findPoint(searchPoint,param DRAWDEBUG_ARG)){
+                found = true;
+                if(direction){
+                    currentLength += searchPoint.low_high.distance(points[points.size()-1].low_high);
+                    points.push_back(searchPoint);
+                }else{
+                    currentLength += searchPoint.low_high.distance(points[0].low_high);
+                    points.push_front(searchPoint);
+                }
+
             }
-
-        }else{
+        }
+        if(!found){
             //found no point, decrease length
             //TODO add some better algo.
             currentStepLength *= 0.5;
@@ -125,62 +123,10 @@ int Line::extend(LinePoint &start,bool direction DRAWDEBUG){
             if(currentStepLength < m_LineParam.stepLengthMin){
                 //stop searching, no more points can be found on this line
                 //TODO return
-                return 0;
+                break;
             }
         }
     }
-return 0;
-}
-
-
-//TODO remove
-int Line::calcDistance(LinePoint &first, LinePoint &next) {
-
-    int dx = first.low_high.x - next.low_high.x;
-    int dy = first.low_high.y - next.low_high.y;
-
-    return sqrt(dx*dx + dy*dy);
-
-}
-//TODO change to radians form PI to -PI
-int Line::limitAngle(int dir) {
-    while (dir > 360)
-        dir = dir - 360;
-    while (dir < 0)
-        dir = 360 + dir;
-
-    return dir;
-}
-
-bool Line::checkAngle(LinePoint &start, LinePoint &next) {
-
-    float angle_start = 0.0;
-    float angle_next = 0.0;
-
-    float dx_start = abs(start.low_high.x - start.high_low.x);
-    float dy_start = abs(start.low_high.y - start.high_low.y);
-
-    float dx_next = abs(next.low_high.x - next.high_low.x);
-    float dy_next = abs(next.low_high.y - next.high_low.y);
-
-    if(dx_start == 0)
-        angle_start = M_PI;
-    if(dx_next == 0)
-        angle_next = M_PI;
-
-    angle_start = atan2(dy_start,dx_start);
-    angle_next = atan2(dy_next, dx_next);
-
-    float dangle = fabs(angle_next - angle_start);
-    float dgradient = 0;//fabs(start.up.non_disc_direction - next.up.non_disc_direction);
-
-    if(dangle > (70.0/180.0)*M_PI || dgradient > 60) {
-        //printf("%f | %f \n", (dangle/M_PI)*180.0, dgradient);
-        return false;
-    }
-    else
-        return true;
-
 }
 
 } //namepsace find

@@ -31,15 +31,8 @@ protected:
     LineParam m_LineParam;
     std::deque<LinePoint> points;
 
-    bool verify();
-
-
-    int limitAngle(int dir);
     bool initialSearch(Pixel px, uint16_t length, int16_t phi);
-    int extend(LinePoint &start,bool direction DRAWDEBUG);
-
-    int calcDistance(LinePoint &first, LinePoint &next);
-    bool checkAngle(LinePoint &start, LinePoint &next);
+    void extend(LinePoint &start,bool direction DRAWDEBUG);
 };
 
 } //namepsace find

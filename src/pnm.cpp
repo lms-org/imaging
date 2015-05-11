@@ -62,9 +62,10 @@ bool pnmHelperRead(Image &image, const std::string &path,
     is.ignore(1);
 
     // read data from ifstream into buffer
-    std::copy(
+    // TODO or use is.read() ...
+    std::copy_n(
             std::istreambuf_iterator<char>(is),
-            std::istreambuf_iterator<char>( ),
+            width * height,
             reinterpret_cast<char*>(image.data()));
     is.close();
 

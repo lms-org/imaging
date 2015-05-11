@@ -45,6 +45,12 @@ bool EdgePoint::find(DRAWDEBUG_PARAM_N){
         //sobel pxl
         m_sobelX = op::sobelX(_x,_y,*m_searchParam.gaussBuffer);
         m_sobelY = op::sobelY(_x,_y,*m_searchParam.gaussBuffer);
+        /*
+        if(m_sobelX > 0){
+            std::cout << "SOBEL: " << m_sobelX  << " " << m_sobelY << std::endl;
+            std::cout << "POS: " << _x  << " " << _y << std::endl;
+        }
+        */
          //check if gradient of sobel is big enough
         if(pow(m_sobelX,2)+pow(m_sobelY,2) > pow(m_searchParam.sobelThreshold,2)){
             //found an edge

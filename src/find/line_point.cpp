@@ -25,7 +25,6 @@ bool LinePoint::find(DRAWDEBUG_PARAM_N){
     //TODO those two methods are quite bad
     low_high.setImage(const_cast<lms::imaging::Image*>(param.target));
     high_low.setImage(const_cast<lms::imaging::Image*>(param.target));
-
     //the first searchPoint is already set in the params, just need to set the EdgeType
     m_LinePointParam.searchType = EdgePoint::EdgeType::LOW_HIGH;
     //try to find the first edge
@@ -47,16 +46,16 @@ bool LinePoint::find(DRAWDEBUG_PARAM_N){
     DRAWCROSS(low_high.x,low_high.y,0,255,0);
 
     //draw the tangents
-    DRAWLINE(low_high.x,low_high.y,low_high.x*10*cos(low_high.sobelNormal()),low_high.y*10*sin(low_high.sobelNormal()),255,255,0);
-    DRAWLINE(low_high.x,low_high.y,low_high.x*10*cos(low_high.sobelTangent()),low_high.y*10*sin(low_high.sobelTangent()),0,255,255);
+    //DRAWLINE(low_high.x,low_high.y,low_high.x*10*cos(low_high.sobelNormal()),low_high.y*10*sin(low_high.sobelNormal()),255,255,0);
+    //DRAWLINE(low_high.x,low_high.y,low_high.x*10*cos(low_high.sobelTangent()),low_high.y*10*sin(low_high.sobelTangent()),0,255,255);
     //TODO: Don't know why that doesn't work well! Sobel values are quite bad!
-    if(!high_low.find(param DRAWDEBUG_ARG)){
+    //if(!high_low.find(param DRAWDEBUG_ARG)){
         //high_low edge wasn't found, try to find it in the old searchAngle
         param.searchAngle = m_LinePointParam.searchAngle;
-        if(!high_low.find(m_LinePointParam DRAWDEBUG_ARG)){
+        if(!high_low.find(param DRAWDEBUG_ARG)){
             return false;
         }
-    }
+    //}
     //found both low->high and high->low edge!
     DRAWCROSS(high_low.x,high_low.y,255,255,0);
 

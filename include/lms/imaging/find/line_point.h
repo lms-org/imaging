@@ -30,6 +30,7 @@ public:
     float getSlope();
     float distance();
 
+
 private:
     LinePointParam m_LinePointParam;
 };

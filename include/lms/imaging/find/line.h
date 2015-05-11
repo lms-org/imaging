@@ -11,13 +11,11 @@ namespace find{
 
 class Line{
 public:
-    Line();
-
     struct LineParam:public LinePoint::LinePointParam{
-        /*
-        LineParam():maxLength(INFINITY),approxEdge(false){
-
-        }*/
+        LineParam():stepLengthMin(0),stepLengthMax(0),maxLength(INFINITY),approxEdge(false){
+        }
+        float stepLengthMin;
+        float stepLengthMax;
         float maxLength;
         bool approxEdge;
     };
@@ -31,7 +29,7 @@ public:
 
 protected:
     LineParam m_LineParam;
-    std::vector<LinePoint> points;
+    std::deque<LinePoint> points;
 
     bool verify();
 

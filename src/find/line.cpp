@@ -18,14 +18,16 @@ void Line::setParam(const LineParam &lineParam){
 }
 bool Line::find(DRAWDEBUG_PARAM_N){
     points.clear();
-    LinePoint &lp = points[points.size()];
-    if(findPoint(lp,m_LineParam DRAWDEBUG_ARG)){
+    LinePoint lp;
+    LinePoint::LinePointParam p = m_LineParam;
+    if(!findPoint(lp,p DRAWDEBUG_ARG)){
         //didn't found the receptor point!
         return false;
     }
+    points.push_front(lp);
 
     //found receptor point -> try to extend the line
-    extend(lp,true DRAWDEBUG_ARG);
+    //extend(lp,true DRAWDEBUG_ARG);
     extend(lp,false DRAWDEBUG_ARG);
     return true;
 }
@@ -46,43 +48,52 @@ int Line::extend(LinePoint &start,bool direction DRAWDEBUG){
     Pixel pixel;
     pixel.setImage(start.low_high.getImage());
 
-    std::vector<LinePoint> points;
-    points.push_back(start);
-
     float searchStepX;
     float searchStepY;
     float searchTangentAngle;
     float currentLength = 0;
-    float stepLengthMax=10;
-    float stepLengthMin = 5;
-    float currentStepLength = 0;
+    float currentStepLength = m_LineParam.stepLengthMax;
 
     //search as long as the searchLength isn't reached
     while(currentLength < m_LineParam.maxLength){
         //Create new point using the last data
-        LinePoint searchPoint = points[points.size()-1];
+        LinePoint searchPoint;
+        if(direction){
+            searchPoint = points[points.size()-1];
+        }else{
+            searchPoint = points[0];
+        }
+
         //get needed stuff
         float lineWidth = searchPoint.distance();
 
         pixel.x = searchPoint.low_high.x;
         pixel.y = searchPoint.low_high.y;
         float searchNormalAngle = searchPoint.getAngle();
+        if(points.size() > 1){
+            //get angle between last two points
+            EdgePoint *top;
+            EdgePoint *bot;
+            if(direction){
+                top = &points[points.size()-1].low_high;
+                bot = &points[points.size()-2].low_high;
+            }else{
+                top = &points[1].low_high;
+                bot = &points[0].low_high;
+            }
+            searchNormalAngle = atan2(top->y - bot->y,top->x-bot->x);
+            //TODO "-" only works because the low_high edge is on the left!
+            searchNormalAngle -= M_PI_2l;
+        }
 
         if(direction){
-            searchTangentAngle = searchNormalAngle-M_PI_2l;
-        }else{
             searchTangentAngle = searchNormalAngle+M_PI_2l;
+        }else{
+            searchTangentAngle = searchNormalAngle-M_PI_2l;
         }
         //move the point along the tangent of the line and afterwards move it from the line so the point isn't already on the line
-        searchStepX = cos(searchTangentAngle)*stepLengthMax-3*lineWidth*cos(searchNormalAngle);
-        searchStepY = sin(searchTangentAngle)*stepLengthMax-3*lineWidth*sin(searchNormalAngle);
-        /*
-        std::cout<< "posX: " << searchPoint.low_high.x << " " << searchPoint.high_low.x << std::endl;
-        std::cout<< "posY: " << searchPoint.low_high.y << " " << searchPoint.high_low.y << std::endl;
-        std::cout <<"normal : " << searchNormalAngle <<std::endl;
-        std::cout << "deltaX " << cos(searchTangentAngle)*stepLengthMax << " " <<lineWidth*cos(searchNormalAngle) << std::endl;
-        std::cout << "deltaY " << sin(searchTangentAngle)*stepLengthMax << " " <<lineWidth*sin(searchNormalAngle) << std::endl;
-        */
+        searchStepX = cos(searchTangentAngle)*currentStepLength-2*lineWidth*cos(searchNormalAngle);
+        searchStepY = sin(searchTangentAngle)*currentStepLength-2*lineWidth*sin(searchNormalAngle);
 
         //try to find a new point
         //calculate new searchPoint
@@ -94,20 +105,24 @@ int Line::extend(LinePoint &start,bool direction DRAWDEBUG){
         LinePoint::LinePointParam param = m_LineParam;
         param.x = pixel.x;
         param.y = pixel.y;
-        param.searchLength = m_LineParam.lineWidthMax*5;
+        param.searchLength = m_LineParam.lineWidthMax*3;
         param.searchAngle = searchNormalAngle;
 
         if(findPoint(searchPoint,param DRAWDEBUG_ARG)){
-            //TODO
-            currentLength += searchPoint.low_high.distance(points[points.size()-1].low_high);
-            points.push_back(searchPoint);
+            if(direction){
+                currentLength += searchPoint.low_high.distance(points[points.size()-1].low_high);
+                points.push_back(searchPoint);
+            }else{
+                currentLength += searchPoint.low_high.distance(points[0].low_high);
+                points.push_front(searchPoint);
+            }
 
         }else{
             //found no point, decrease length
             //TODO add some better algo.
             currentStepLength *= 0.5;
 
-            if(currentStepLength < stepLengthMin){
+            if(currentStepLength < m_LineParam.stepLengthMin){
                 //stop searching, no more points can be found on this line
                 //TODO return
                 return 0;

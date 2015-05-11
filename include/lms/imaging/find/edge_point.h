@@ -29,6 +29,8 @@ public:
         Image *gaussBuffer;
     };
 
+    typedef EdgePointParam parameterType;
+
 private:
     EdgePointParam m_searchParam;
     int m_sobelX;

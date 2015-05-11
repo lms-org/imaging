@@ -25,6 +25,8 @@ public:
         bool useSobel;
     };
 
+    typedef LinePointParam parameterType;
+
     void setParam(const LinePointParam &param);
     bool find(const LinePointParam &param DRAWDEBUG_PARAM);
     bool find(DRAWDEBUG_PARAM_N);

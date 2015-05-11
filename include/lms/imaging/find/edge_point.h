@@ -51,6 +51,7 @@ private:
         float sobelNormal();
         EdgeType type();
 
+
 protected:
         bool confirmEdgePoint(int threshold);
         void nonMaximumSupression(int rowShift, int colShift);

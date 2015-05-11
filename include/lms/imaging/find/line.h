@@ -11,13 +11,11 @@ namespace find{
 
 class Line{
 public:
-    Line();
-
     struct LineParam:public LinePoint::LinePointParam{
-        /*
-        LineParam():maxLength(INFINITY),approxEdge(false){
-
-        }*/
+        LineParam():stepLengthMin(0),stepLengthMax(0),maxLength(INFINITY),approxEdge(false){
+        }
+        float stepLengthMin;
+        float stepLengthMax;
         float maxLength;
         bool approxEdge;
     };
@@ -31,17 +29,10 @@ public:
 
 protected:
     LineParam m_LineParam;
-    std::vector<LinePoint> points;
+    std::deque<LinePoint> points;
 
-    bool verify();
-
-
-    int limitAngle(int dir);
     bool initialSearch(Pixel px, uint16_t length, int16_t phi);
-    int extend(LinePoint &start,bool direction DRAWDEBUG);
-
-    int calcDistance(LinePoint &first, LinePoint &next);
-    bool checkAngle(LinePoint &start, LinePoint &next);
+    void extend(LinePoint &start,bool direction DRAWDEBUG);
 };
 
 } //namepsace find

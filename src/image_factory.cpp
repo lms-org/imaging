@@ -17,6 +17,7 @@ void gaussPxl(const Image &input,Image &output,int x, int y){
         // set pixel
         *(output.data()+input.width()*y + x ) = gauss;
     }else{
+        std::cout << "ERROR IMAGE FORMAT IS NOT GREY!" << std::endl;
         //ERROR not implemented yetgaussPxlGrey
         return;
     }

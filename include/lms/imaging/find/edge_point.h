@@ -39,6 +39,12 @@ private:
     float m_sobelTangent;
     EdgeType m_type;
 
+    /**
+     * @brief setType "calculates" the type high_low/low_high edge
+     * @return the found type
+     */
+    EdgePoint::EdgeType setType();
+
     public:
         void setSearchParam(const EdgePointParam &searchParam);
         bool find(DRAWDEBUG_PARAM_N);
@@ -52,16 +58,6 @@ private:
         float sobelTangent();
         float sobelNormal();
         EdgeType type();
-
-
-protected:
-        bool confirmEdgePoint(int threshold);
-        void nonMaximumSupression(int rowShift, int colShift);
-        /**
-         * @brief setType "calculates" the type
-         * @return the found type
-         */
-        EdgePoint::EdgeType setType();
 
 };
 

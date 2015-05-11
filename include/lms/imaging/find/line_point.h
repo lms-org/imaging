@@ -15,7 +15,7 @@ class LinePoint {
 public:
 
     struct LinePointParam:public EdgePoint::EdgePointParam{
-    LinePointParam():lineWidthMin(0),lineWidthMax(0),useSobel(false){
+    LinePointParam():lineWidthMin(0),lineWidthMax(0),useSobel(false),edge(false){
     }
         float lineWidthMin;
         float lineWidthMax;
@@ -23,6 +23,10 @@ public:
          * @brief useSobel if true the sobel-angle will be used to find the second point (not recommended!)
          */
         bool useSobel;
+        /**
+         * @brief edge if set to true it will only search for a low_high edge!
+         */
+        bool edge;
     };
 
     typedef LinePointParam parameterType;

@@ -18,7 +18,7 @@ bool pnmHelperSave(const Image &image, const std::string &path,
 
     std::ofstream of(path, std::ios::binary);
 
-    if(of.is_open()) {
+    if(!of.is_open()) {
         return false;
     }
 

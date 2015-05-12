@@ -39,7 +39,9 @@ bool Line::findPoint(LinePoint &pointToFind,LinePoint::LinePointParam linePointP
     DRAWCROSS(linePointParam.x,linePointParam.y,255,0,0);
     return pointToFind.find(linePointParam DRAWDEBUG_ARG);
 }
-
+/**
+  * TODO es kommt auf die suchrichtung an, was direction==true oder false tut, ab dem winkel > 90 dreht sich die suchrichtung im Bild um. Veranschaulicht wird das durch einen Kreis wobei man in den beiden oberen Quadranten sucht.
+  */
 void Line::extend(bool direction DRAWDEBUG){
     lms::math::vertex2i pixel;
 

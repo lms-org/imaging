@@ -68,6 +68,16 @@ public:
 
         return nullptr;
     }
+
+    const ImageHintBase* getByName(const std::string &name) const {
+        for(ImageHintBase *hint : hints) {
+            if(hint->name == name) {
+                return hint;
+            }
+        }
+
+        return nullptr;
+    }
 };
 }
 }

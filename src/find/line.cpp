@@ -128,7 +128,7 @@ void Line::extend(LinePoint &start,bool direction DRAWDEBUG){
     }
 }
 
-const std::deque<LinePoint> Line::points() const {
+const std::deque<LinePoint>& Line::points() const {
     return m_points;
 }
 

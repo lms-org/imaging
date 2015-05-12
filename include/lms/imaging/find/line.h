@@ -31,7 +31,7 @@ public:
 
     void setParam(const LineParam &lineParam);
 
-    const std::deque<LinePoint> points() const;
+    const std::deque<LinePoint> &points() const;
 protected:
     LineParam m_LineParam;
     std::deque<LinePoint> m_points;

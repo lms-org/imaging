@@ -22,9 +22,6 @@ bool LinePoint::find(const LinePointParam &param DRAWDEBUG_PARAM){
 bool LinePoint::find(DRAWDEBUG_PARAM_N){
     //try to find first point, if it fails return as no LinePoint can be found
     EdgePoint::EdgePointParam param = m_LinePointParam;
-    //TODO those two methods are quite bad
-    low_high.setImage(const_cast<lms::imaging::Image*>(param.target));
-    high_low.setImage(const_cast<lms::imaging::Image*>(param.target));
     //the first searchPoint is already set in the params, just need to set the EdgeType
     m_LinePointParam.searchType = EdgePoint::EdgeType::LOW_HIGH;
     //try to find the first edge

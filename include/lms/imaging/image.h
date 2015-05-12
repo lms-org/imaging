@@ -136,7 +136,7 @@ public:
      * @param y
      * @return true if the pixel is inside the image
      */
-    bool inside(int x, int y);
+    bool inside(int x, int y) const;
 
     /**
      * @brief Return the capacity of the image in bytes.

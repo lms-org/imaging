@@ -18,9 +18,20 @@ template <int _DIM, typename _T>
 class vertex : public std::array<_T, _DIM>  {
 };
 
-typedef vertex<2, int>    vertex2i;
+template <typename _T>
+class vertex2 : public vertex<2, _T> {
+public:
+    vertex2() {}
+
+    vertex2(_T x, _T y) {
+        (*this)[0] = x;
+        (*this)[1] = y;
+    }
+};
+
+typedef vertex2<int>    vertex2i;
 typedef vertex<3, int>    vertex3i;
-typedef vertex<2, float>  vertex2f;
+typedef vertex2<float>  vertex2f;
 typedef vertex<3, double> vertex3d;
 typedef vertex<3, float>  vertex3f;
 

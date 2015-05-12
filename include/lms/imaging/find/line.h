@@ -26,9 +26,11 @@ public:
     bool findPoint(LinePoint &pointToFind,LinePoint::LinePointParam linePointParam DRAWDEBUG_PARAM);
 
     void setParam(const LineParam &lineParam);
+
+    const std::deque<LinePoint> points() const;
 protected:
     LineParam m_LineParam;
-    std::deque<LinePoint> points;
+    std::deque<LinePoint> m_points;
 
     bool initialSearch(Pixel px, uint16_t length, int16_t phi);
     void extend(LinePoint &start,bool direction DRAWDEBUG);

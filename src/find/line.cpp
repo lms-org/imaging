@@ -17,14 +17,14 @@ void Line::setParam(const LineParam &lineParam){
     m_LineParam = lineParam;
 }
 bool Line::find(DRAWDEBUG_PARAM_N){
-    points.clear();
+    m_points.clear();
     LinePoint lp;
     LinePoint::LinePointParam p = m_LineParam;
     if(!findPoint(lp,p DRAWDEBUG_ARG)){
         //didn't found the receptor point!
         return false;
     }
-    points.push_front(lp);
+    m_points.push_front(lp);
     //found receptor point -> try to extend the line
     extend(lp,true DRAWDEBUG_ARG);
     extend(lp,false DRAWDEBUG_ARG);
@@ -41,7 +41,6 @@ bool Line::findPoint(LinePoint &pointToFind,LinePoint::LinePointParam linePointP
 
 void Line::extend(LinePoint &start,bool direction DRAWDEBUG){
     Pixel pixel;
-    pixel.setImage(start.low_high.getImage());
 
     float searchStepX;
     float searchStepY;
@@ -56,9 +55,9 @@ void Line::extend(LinePoint &start,bool direction DRAWDEBUG){
         //Create new point using the last data
         LinePoint searchPoint;
         if(direction){
-            searchPoint = points[points.size()-1];
+            searchPoint = m_points[m_points.size()-1];
         }else{
-            searchPoint = points[0];
+            searchPoint = m_points[0];
         }
 
         //get needed stuff
@@ -67,16 +66,16 @@ void Line::extend(LinePoint &start,bool direction DRAWDEBUG){
         pixel.x = searchPoint.low_high.x;
         pixel.y = searchPoint.low_high.y;
         float searchNormalAngle = searchPoint.getAngle();
-        if(points.size() > 1){
+        if(m_points.size() > 1){
             //get angle between last two points
             EdgePoint *top;
             EdgePoint *bot;
             if(direction){
-                top = &points[points.size()-1].low_high;
-                bot = &points[points.size()-2].low_high;
+                top = &m_points[m_points.size()-1].low_high;
+                bot = &m_points[m_points.size()-2].low_high;
             }else{
-                top = &points[1].low_high;
-                bot = &points[0].low_high;
+                top = &m_points[1].low_high;
+                bot = &m_points[0].low_high;
             }
             searchNormalAngle = atan2(top->y - bot->y,top->x-bot->x);
             //TODO "-" only works because the low_high edge is on the left!
@@ -94,7 +93,7 @@ void Line::extend(LinePoint &start,bool direction DRAWDEBUG){
 
         //try to find a new point
         //calculate new searchPoint
-        if(pixel.move(searchStepX,searchStepY)){
+        if(pixel.move(searchStepX,searchStepY, *m_LineParam.target)){
             //TODO that could be made more efficient
             LinePoint::LinePointParam param = m_LineParam;
             param.x = pixel.x;
@@ -106,11 +105,11 @@ void Line::extend(LinePoint &start,bool direction DRAWDEBUG){
             if(findPoint(searchPoint,param DRAWDEBUG_ARG)){
                 found = true;
                 if(direction){
-                    currentLength += searchPoint.low_high.distance(points[points.size()-1].low_high);
-                    points.push_back(searchPoint);
+                    currentLength += searchPoint.low_high.distance(m_points[m_points.size()-1].low_high);
+                    m_points.push_back(searchPoint);
                 }else{
-                    currentLength += searchPoint.low_high.distance(points[0].low_high);
-                    points.push_front(searchPoint);
+                    currentLength += searchPoint.low_high.distance(m_points[0].low_high);
+                    m_points.push_front(searchPoint);
                 }
 
             }
@@ -127,6 +126,10 @@ void Line::extend(LinePoint &start,bool direction DRAWDEBUG){
             }
         }
     }
+}
+
+const std::deque<LinePoint> Line::points() const {
+    return m_points;
 }
 
 } //namepsace find

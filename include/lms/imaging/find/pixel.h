@@ -15,22 +15,14 @@ public:
 
     Pixel() : x(0), y(0) {}
     Pixel(uint16_t _x, uint16_t _y) : x(_x), y(_y) {}
-    bool insideImage();
-    bool move(int dx, int dy);
+    bool move(int dx, int dy, const lms::imaging::Image &image);
 
-    Image* getImage();
-    void setImage(Image *image);
     /**
      * @brief distance
      * @param pixel
      * @return the distance between two pixels
      */
     float distance(Pixel &pixel);
-private:
-    /**
-     * @brief image the image containing the pixel
-     */
-    Image *image;
 };
 
 } //namepsace find

@@ -58,6 +58,16 @@ public:
     void reset(){
         hints.clear();
     }
+
+    ImageHintBase* getByName(const std::string &name) {
+        for(ImageHintBase *hint : hints) {
+            if(hint->name == name) {
+                return hint;
+            }
+        }
+
+        return nullptr;
+    }
 };
 }
 }

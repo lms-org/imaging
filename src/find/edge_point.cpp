@@ -82,8 +82,7 @@ bool EdgePoint::find(DRAWDEBUG_PARAM_N){
     return found;
 }
 
-//setzt high-low oder low-high kante
-//TODO sucks if the searchAngle is 0/180 and sobelY dominates and vise versa
+
 EdgePoint::EdgeType EdgePoint::setType() {
     if(abs(sobelX()) > abs(sobelY())){
        if(sobelX() > 0){
@@ -103,16 +102,16 @@ EdgePoint::EdgeType EdgePoint::setType() {
         m_type = EdgeType::PLANE;
     }else{
         if(sobelY()>0){
-            if(lms::math::sgn(sin(m_searchParam.searchAngle)))
+            if(sin(m_searchParam.searchAngle) < 0)
                 m_type = EdgeType::LOW_HIGH;
             else{
                 m_type = EdgeType::HIGH_LOW;
             }
         }else{
-            if(!lms::math::sgn(sin(m_searchParam.searchAngle)))
-                m_type = EdgeType::LOW_HIGH;
-            else{
+            if(sin(m_searchParam.searchAngle) < 0)
                 m_type = EdgeType::HIGH_LOW;
+            else{
+                m_type = EdgeType::LOW_HIGH;
             }
         }
     }

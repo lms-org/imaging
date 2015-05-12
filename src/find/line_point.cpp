@@ -30,6 +30,14 @@ bool LinePoint::find(DRAWDEBUG_PARAM_N){
         return false;
     }
 
+    //draw the found point
+    DRAWCROSS(low_high.x,low_high.y,0,255,0);
+    //check if the user is only looking for one edge
+    if(m_LinePointParam.edge){
+        //the low_high edge was found :)
+        return true;
+    }
+
     //set new values for second edge
     param.searchType = EdgePoint::EdgeType::HIGH_LOW;
     param.x = low_high.x;
@@ -38,9 +46,6 @@ bool LinePoint::find(DRAWDEBUG_PARAM_N){
     param.searchAngle = low_high.sobelNormal();
     //TODO we could reduce the search-length
     //param.searchLength = ?
-
-    //draw the found point
-    DRAWCROSS(low_high.x,low_high.y,0,255,0);
 
     //draw the tangent/normal of the sobel
     //DRAWLINE(low_high.x,low_high.y,low_high.x*10*cos(low_high.sobelNormal()),low_high.y*10*sin(low_high.sobelNormal()),255,255,0);

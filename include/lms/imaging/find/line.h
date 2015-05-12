@@ -11,12 +11,16 @@ namespace find{
 class Line{
 public:
     struct LineParam:public LinePoint::LinePointParam{
-        LineParam():stepLengthMin(0),stepLengthMax(0),maxLength(INFINITY),approxEdge(false){
+        LineParam():stepLengthMin(0),stepLengthMax(0),maxLength(INFINITY),approxEdge(false),lineWidthTransMultiplier(2){
         }
         float stepLengthMin;
         float stepLengthMax;
         float maxLength;
         bool approxEdge;
+        /**
+         * @brief lineWidthTransMultiplier value that is multiplied with the stepLengthMax to move the last found point to find the new point
+         */
+        float lineWidthTransMultiplier;
     };
 
     typedef LineParam parameterType;

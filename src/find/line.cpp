@@ -61,11 +61,11 @@ void Line::extend(LinePoint &start,bool direction DRAWDEBUG){
         }
 
         //get needed stuff
-        float lineWidth = searchPoint.distance();
+        //float lineWidth = searchPoint.distance();
 
         pixel.x = searchPoint.low_high.x;
         pixel.y = searchPoint.low_high.y;
-        float searchNormalAngle = searchPoint.getAngle();
+        float searchNormalAngle = m_LineParam.searchAngle;
         if(m_points.size() > 1){
             //get angle between last two points
             EdgePoint *top;
@@ -88,8 +88,8 @@ void Line::extend(LinePoint &start,bool direction DRAWDEBUG){
             searchTangentAngle = searchNormalAngle-M_PI_2l;
         }
         //move the point along the tangent of the line and afterwards move it from the line so the point isn't already on the line
-        searchStepX = cos(searchTangentAngle)*currentStepLength-2*lineWidth*cos(searchNormalAngle);
-        searchStepY = sin(searchTangentAngle)*currentStepLength-2*lineWidth*sin(searchNormalAngle);
+        searchStepX = cos(searchTangentAngle)*currentStepLength-m_LineParam.lineWidthTransMultiplier*m_LineParam.lineWidthMax*cos(searchNormalAngle);
+        searchStepY = sin(searchTangentAngle)*currentStepLength-m_LineParam.lineWidthTransMultiplier*m_LineParam.lineWidthMax*sin(searchNormalAngle);
 
         //try to find a new point
         //calculate new searchPoint

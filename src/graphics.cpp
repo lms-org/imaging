@@ -83,5 +83,14 @@ void BGRAImageGraphics::drawPixel(int x, int y) {
         *(data + x + y * image.width()) = color.value;
     }
 }
+
+void BGRAImageGraphics::fillWhite() {
+    image.fill(255);
+}
+
+void BGRAImageGraphics::fillTransparent() {
+    image.fill(0);
+}
+
 }  // namespace imaging
 }  // namespace lms

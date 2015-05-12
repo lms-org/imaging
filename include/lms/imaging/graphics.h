@@ -34,6 +34,16 @@ public:
     virtual void setColor(ARGBColor color) =0;
 
     /**
+     * @brief Fill the whole image with opaque white.
+     */
+    virtual void fillWhite() =0;
+
+    /**
+     * @brief Fill the whole image with a transparent color.
+     */
+    virtual void fillTransparent() =0;
+
+    /**
      * @brief Draw a single pixel at (x, y).
      * @param x coordinate x
      * @param y coordinate y
@@ -98,6 +108,9 @@ public:
 
     void setColor(ARGBColor color) override;
     void drawPixel(int x, int y) override;
+
+    virtual void fillWhite() override;
+    virtual void fillTransparent() override;
 private:
     ARGBColor color;
     Image &image;

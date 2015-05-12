@@ -71,6 +71,16 @@ void Graphics::drawCross(int x,int y){
     drawPixel(x,y+1);
 }
 
+void Graphics::drawCross(int x,int y, int crossLength){
+    drawPixel(x,y);
+    for(int i = 1; i <= crossLength; i++){
+        drawPixel(x-i,y);
+        drawPixel(x+i,y);
+        drawPixel(x,y-i);
+        drawPixel(x,y+i);
+    }
+}
+
 BGRAImageGraphics::BGRAImageGraphics(Image &image) : image(image) {}
 
 void BGRAImageGraphics::setColor(ARGBColor color) {

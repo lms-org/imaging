@@ -6,6 +6,7 @@
 #include "lms/imaging/magic/cali_ab.h"
 
 #include "lms/imaging/warp.h"
+#include "lms/math/vertex.h"
 
 namespace lms {
 namespace imaging {
@@ -13,7 +14,7 @@ namespace imaging {
 #define CALI_WIDTH 320
 #define CALI_HEIGHT 240
 
-bool C2V(const vertex2i* lp, vertex2f* rp, float *angle_out) {
+bool C2V(const lms::math::vertex2i* lp, lms::math::vertex2f* rp, float *angle_out) {
     float xtemp, ytemp, dxdx, dydy, dxdy, dydx;
 
     int x = (*lp)[0];
@@ -54,7 +55,7 @@ bool C2V(const vertex2i* lp, vertex2f* rp, float *angle_out) {
     return true;
 }
 
-bool V2C(const vertex2f* rp, vertex2i* px, float *direction) {
+bool V2C(const lms::math::vertex2f* rp, lms::math::vertex2i* px, float *direction) {
 
     //Felix: Umrechnung der Autokoordinaten ins unverzerrte Bild
     float x = (float)(*rp)[0];
@@ -121,8 +122,8 @@ void imageV2C(const Image &input, Image &output) {
     const int planeSize = 5;
     output.resize(textureSize, textureSize, Format::GREY);
 
-    vertex2f in;
-    vertex2i out;
+    lms::math::vertex2f in;
+    lms::math::vertex2i out;
     bool success;
     std::uint8_t color;
 

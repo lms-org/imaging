@@ -69,8 +69,8 @@ bool EdgePoint::find(DRAWDEBUG_PARAM_N){
                 }else{
                     m_sobelTangent+=M_PI_2l;
                 }
-                this->x = _x;
-                this->y = _y;
+                this->x() =_x;
+                this->y() =_y;
                 found = true;
                 //stop the bresenham
                 return false;

@@ -4,6 +4,7 @@
 #include <cmath>
 #include <lms/imaging/draw_debug.h>
 #include <algorithm>
+#include "lms/math/vertex.h"
 namespace lms{
 namespace imaging{
 namespace find{
@@ -26,8 +27,8 @@ bool Line::find(DRAWDEBUG_PARAM_N){
     }
     m_points.push_front(lp);
     //found receptor point -> try to extend the line
-    extend(lp,true DRAWDEBUG_ARG);
-    extend(lp,false DRAWDEBUG_ARG);
+    extend(true DRAWDEBUG_ARG);
+    extend(false DRAWDEBUG_ARG);
     return true;
 }
 
@@ -39,8 +40,8 @@ bool Line::findPoint(LinePoint &pointToFind,LinePoint::LinePointParam linePointP
     return pointToFind.find(linePointParam DRAWDEBUG_ARG);
 }
 
-void Line::extend(LinePoint &start,bool direction DRAWDEBUG){
-    Pixel pixel;
+void Line::extend(bool direction DRAWDEBUG){
+    lms::math::vertex2i pixel;
 
     float searchStepX;
     float searchStepY;
@@ -63,8 +64,8 @@ void Line::extend(LinePoint &start,bool direction DRAWDEBUG){
         //get needed stuff
         //float lineWidth = searchPoint.distance();
 
-        pixel.x = searchPoint.low_high.x;
-        pixel.y = searchPoint.low_high.y;
+        pixel.x() = searchPoint.low_high.x();
+        pixel.y() = searchPoint.low_high.y();
         float searchNormalAngle = m_LineParam.searchAngle;
         if(m_points.size() > 1){
             //get angle between last two points
@@ -77,7 +78,7 @@ void Line::extend(LinePoint &start,bool direction DRAWDEBUG){
                 top = &m_points[1].low_high;
                 bot = &m_points[0].low_high;
             }
-            searchNormalAngle = atan2(top->y - bot->y,top->x-bot->x);
+            searchNormalAngle = atan2(top->y() - bot->y(),top->x()-bot->x());
             //TODO "-" only works because the low_high edge is on the left!
             searchNormalAngle -= M_PI_2l;
         }
@@ -93,11 +94,13 @@ void Line::extend(LinePoint &start,bool direction DRAWDEBUG){
 
         //try to find a new point
         //calculate new searchPoint
-        if(pixel.move(searchStepX,searchStepY, *m_LineParam.target)){
+        if(m_LineParam.target->inside(pixel.x()+searchStepX,pixel.y()+searchStepY)){
+            //move pixel
+            pixel += lms::math::vertex2i(searchStepX,searchStepY);
             //TODO that could be made more efficient
             LinePoint::LinePointParam param = m_LineParam;
-            param.x = pixel.x;
-            param.y = pixel.y;
+            param.x = pixel.x();
+            param.y = pixel.y();
             param.searchLength = m_LineParam.lineWidthMax*3;
             param.searchAngle = searchNormalAngle;
 

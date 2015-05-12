@@ -65,7 +65,6 @@ public:
                 return hint;
             }
         }
-
         return nullptr;
     }
 
@@ -75,7 +74,6 @@ public:
                 return hint;
             }
         }
-
         return nullptr;
     }
 };

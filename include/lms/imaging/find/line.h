@@ -36,8 +36,7 @@ protected:
     LineParam m_LineParam;
     std::deque<LinePoint> m_points;
 
-    bool initialSearch(Pixel px, uint16_t length, int16_t phi);
-    void extend(LinePoint &start,bool direction DRAWDEBUG);
+    void extend(bool direction DRAWDEBUG);
 };
 
 } //namepsace find

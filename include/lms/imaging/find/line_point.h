@@ -2,7 +2,6 @@
 #define IMAGE_LINE_POINT
 
 #include "lms/imaging/find/edge_point.h"
-#include "lms/imaging/find/pixel.h"
 #include <lms/imaging/draw_debug.h>
 
 namespace lms{

@@ -2,15 +2,14 @@
 
 #define IMAGE_EDGE_POINT
 
-#include "lms/imaging/find/pixel.h"
 #include <math.h>
 #include <lms/imaging/draw_debug.h>
 #include "lms/deprecated.h"
-
+#include "lms/math/vertex.h"
 namespace lms{
 namespace imaging{
 namespace find{
-class EdgePoint: public Pixel{
+class EdgePoint: public lms::math::vertex2i{
 
 public:
     enum class EdgeType {LOW_HIGH, HIGH_LOW, PLANE};

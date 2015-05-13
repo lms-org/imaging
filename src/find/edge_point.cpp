@@ -5,7 +5,8 @@
 #include <algorithm>
 #include <cmath>
 #include <lms/imaging/image_factory.h>
-#include <lms/extra/math.h>
+#include <lms/math/math.h>
+#include "lms/math/curve.h"
 
 #include <lms/imaging/draw_debug.h>
 #include <iostream>
@@ -30,7 +31,7 @@ bool EdgePoint::find(DRAWDEBUG_PARAM_N){
     //end-points for the bresenham-function
     int xMax = m_searchParam.x+m_searchParam.searchLength*cos(m_searchParam.searchAngle);
     int yMax = m_searchParam.y+m_searchParam.searchLength*sin(m_searchParam.searchAngle);
-    bresenhamLine(m_searchParam.x,m_searchParam.y,xMax,yMax,[this,&found DRAWDEBUG_CAPTURE](int _x, int _y){
+    lms::math::bresenhamLine(m_searchParam.x,m_searchParam.y,xMax,yMax,[this,&found DRAWDEBUG_CAPTURE](int _x, int _y){
         //check if points are inside the image
         if(_x < 0 || _x > m_searchParam.target->width() || _y < 0 || _y >m_searchParam.target->height())
             return false;

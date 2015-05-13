@@ -1,5 +1,5 @@
 #include "lms/imaging/graphics.h"
-#include "lms/imaging/image_factory.h"
+#include "lms/math/curve.h"
 
 namespace lms {
 namespace imaging {
@@ -44,7 +44,7 @@ void Graphics::drawVerticalLine(int x, int y, int length) {
 }
 
 void Graphics::drawLine(int x1, int y1, int x2, int y2) {
-    bresenhamLine(x1, y1, x2, y2, [this](int x, int y) {
+    lms::math::bresenhamLine(x1, y1, x2, y2, [this](int x, int y) {
         drawPixel(x, y);
         return true;
     });

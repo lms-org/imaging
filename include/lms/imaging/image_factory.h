@@ -74,21 +74,11 @@ void gaussBox(const Image &input,Image &output,int xMin, int yMin,int xMax, int 
 //##################################################
 //################SOBEL
 //##################################################
-//sobel
 void sobelX(const Image &input, Image &output);
 void sobelY(const Image &input, Image &output);
 int sobelX(int x, int y,const Image &image);
 int sobelY(int x, int y,const Image &image);
-/**
- * @brief cannyPxl
- * @param input
- * @param gaussbuffer
- * @param output
- * @param x
- * @param y
- * @return pixel color at the given position, maybe wrong here as we would like to say canny in x and y direction to calculate the angle
- */
-//pixel cannyPxl(Image input, Image gaussbuffer, Image output, int x, int y);
+
 //##################################################
 //################SOBEL END
 //##################################################
@@ -99,10 +89,6 @@ int sobelY(int x, int y,const Image &image);
 
 void subtract(const Image &input1, const Image &input2, Image &output, int minVal=0, int maxVal=255);
 }  //namepace op
-
-void bresenhamLine(int x0, int y0, int x1, int y1,std::function<bool(int,int)> foundPixel);
-void bresenhamLine(int x0, int y0, int x1, int y1, std::vector<int> &vX, std::vector<int> &vY);
-
 }  // namespace imaging
 }  // namespace lms
 

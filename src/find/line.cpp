@@ -22,15 +22,29 @@ bool Line::find(DRAWDEBUG_PARAM_N){
     LinePoint::LinePointParam lParam = m_LineParam;
     bool found = false;
     if(!findPoint(lp,lParam DRAWDEBUG_ARG)){
-        if(m_LineParam.verify){
-            for(int i = m_points.size()/3; i < m_points.size(); i++){
-                LinePoint &old = m_points[i];
-                lParam.x = old.param().x;
-                lParam.y = old.param().y;
-                lParam.searchAngle = old.getAngle();
-                if(findPoint(lp,lParam DRAWDEBUG_ARG)){
-                    found = true;
-                    break;
+        if(m_LineParam.verify && m_points.size() > 0){
+            //get the ending that is close to the search-point
+            if(pow(m_points[0].param().x-m_LineParam.x,2) +pow(m_points[0].param().y-m_LineParam.y,2)<pow(m_points[m_points.size()-1].param().x-m_LineParam.x,2) +pow(m_points[m_points.size()-1].param().y-m_LineParam.y,2)){
+                for(int i = 0; i < m_points.size(); i++){
+                    LinePoint &old = m_points[i];
+                    lParam.x = old.param().x;
+                    lParam.y = old.param().y;
+                    lParam.searchAngle = old.getAngle();
+                    if(findPoint(lp,lParam DRAWDEBUG_ARG)){
+                        found = true;
+                        break;
+                    }
+                }
+            }else{
+                for(int i = m_points.size()-1; i >= 0; i--){
+                    LinePoint &old = m_points[i];
+                    lParam.x = old.param().x;
+                    lParam.y = old.param().y;
+                    lParam.searchAngle = old.getAngle();
+                    if(findPoint(lp,lParam DRAWDEBUG_ARG)){
+                        found = true;
+                        break;
+                    }
                 }
             }
         }

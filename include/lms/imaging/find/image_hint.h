@@ -14,6 +14,7 @@ protected:
     bool m_success;
 
 public:
+    virtual const lms::imaging::Image* getTarget()const = 0;
     std::string name;
     virtual ~ImageHintBase(){
     }
@@ -30,7 +31,6 @@ public:
     bool success(){
         return m_success;
     }
-
 };
 
 template<class T>
@@ -43,6 +43,11 @@ public:
     bool find(DRAWDEBUG_PARAM_N){
         m_success = imageObject.find(parameter DRAWDEBUG_ARG);
         return m_success;
+    }
+
+
+    const lms::imaging::Image* getTarget() const override{
+        return parameter.target;
     }
 };
 

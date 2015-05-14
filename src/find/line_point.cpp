@@ -90,6 +90,14 @@ float LinePoint::getSlope(){
     return dy/dx;
 }
 
+LinePoint::LinePointParam& LinePoint::param(){
+    return m_LinePointParam;
+}
+
+const LinePoint::LinePointParam& LinePoint::param() const{
+    return m_LinePointParam;
+}
+
 } //namepsace find
 } //namespace imaging
 } //namespace lms

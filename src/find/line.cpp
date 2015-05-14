@@ -18,11 +18,28 @@ void Line::setParam(const LineParam &lineParam){
     m_LineParam = lineParam;
 }
 bool Line::find(DRAWDEBUG_PARAM_N){
-    m_points.clear();
     LinePoint lp;
-    LinePoint::LinePointParam p = m_LineParam;
-    if(!findPoint(lp,p DRAWDEBUG_ARG)){
-        //didn't found the receptor point!
+    LinePoint::LinePointParam lParam = m_LineParam;
+    bool found = false;
+    if(!findPoint(lp,lParam DRAWDEBUG_ARG)){
+        if(m_LineParam.verify){
+            for(int i = m_points.size()/3; i < m_points.size(); i++){
+                LinePoint &old = m_points[i];
+                lParam.x = old.param().x;
+                lParam.y = old.param().y;
+                lParam.searchAngle = old.getAngle();
+                if(findPoint(lp,lParam DRAWDEBUG_ARG)){
+                    found = true;
+                    break;
+                }
+            }
+        }
+    }else{
+        found = true;
+    }
+    m_points.clear();
+
+    if(!found){
         return false;
     }
     m_points.push_front(lp);

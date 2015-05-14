@@ -31,6 +31,9 @@ public:
     typedef LinePointParam parameterType;
 
     void setParam(const LinePointParam &param);
+    LinePointParam& param();
+    const LinePointParam& param() const;
+
     bool find(const LinePointParam &param DRAWDEBUG_PARAM);
     bool find(DRAWDEBUG_PARAM_N);
 

@@ -47,12 +47,6 @@ bool EdgePoint::find(DRAWDEBUG_PARAM_N){
         //sobel pxl
         m_sobelX = op::sobelX(_x,_y,*m_searchParam.gaussBuffer);
         m_sobelY = op::sobelY(_x,_y,*m_searchParam.gaussBuffer);
-        /*
-        if(m_sobelX > 0){
-            std::cout << "SOBEL: " << m_sobelX  << " " << m_sobelY << std::endl;
-            std::cout << "POS: " << _x  << " " << _y << std::endl;
-        }
-        */
         //check if gradient of sobel is big enough
         if(pow(m_sobelX,2)+pow(m_sobelY,2) > pow(m_searchParam.sobelThreshold,2)){
             //found an edge
@@ -85,40 +79,16 @@ bool EdgePoint::find(DRAWDEBUG_PARAM_N){
 
 
 EdgePoint::EdgeType EdgePoint::setType() {
-    if(abs(sobelX()) > abs(sobelY())){
-       if(sobelX() > 0){
-            if(cos(m_searchParam.searchAngle) >= 0)
-                m_type = EdgeType::LOW_HIGH;
-            else{
-                m_type = EdgeType::HIGH_LOW;
-            }
-        }else{
-            if(cos(m_searchParam.searchAngle) >= 0)
-                m_type = EdgeType::HIGH_LOW;
-            else{
-                m_type = EdgeType::LOW_HIGH;
-            }
-        }
-    }else if(sobelX() == 0 && sobelY() == 0){
-        m_type = EdgeType::PLANE;
+    float x2 = cos(m_searchParam.searchAngle);
+    float y2 = -sin(m_searchParam.searchAngle);
+    float scalar = sobelX()*x2+sobelY()*y2;
+    if(scalar > 0){
+        m_type = EdgeType::LOW_HIGH;
+    }else if(scalar < 0){
+        m_type = EdgeType::HIGH_LOW;
     }else{
-        if(sobelY()>0){
-            if(sin(m_searchParam.searchAngle) < 0)
-                m_type = EdgeType::LOW_HIGH;
-            else{
-                m_type = EdgeType::HIGH_LOW;
-            }
-        }else{
-            if(sin(m_searchParam.searchAngle) < 0)
-                m_type = EdgeType::HIGH_LOW;
-            else{
-                m_type = EdgeType::LOW_HIGH;
-            }
-        }
+        m_type = EdgeType::PLANE;
     }
-
-
-
     return m_type;
 }
 

@@ -58,7 +58,7 @@ bool Line::verifyPoint(LinePoint &lp, LinePoint::LinePointParam lParam DRAWDEBUG
                 lParam.x = old.param().x;
                 lParam.y = old.param().y;
                 lParam.searchAngle = old.getAngle();
-                std::cout << "try to find: " << lParam.x << " "<<lParam.y << " "<< lParam.searchAngle<<std::endl;
+                //std::cout << "try to find: " << lParam.x << " "<<lParam.y << " "<< lParam.searchAngle<<std::endl;
                 if(findPoint(lp,lParam DRAWDEBUG_ARG)){
                     found = true;
                     break;
@@ -70,7 +70,7 @@ bool Line::verifyPoint(LinePoint &lp, LinePoint::LinePointParam lParam DRAWDEBUG
                 lParam.x = old.param().x;
                 lParam.y = old.param().y;
                 lParam.searchAngle = old.getAngle();
-                std::cout << "try to find: " << lParam.x << " "<<lParam.y << " "<< lParam.searchAngle<<std::endl;
+                //std::cout << "try to find: " << lParam.x << " "<<lParam.y << " "<< lParam.searchAngle<<std::endl;
 
                 if(findPoint(lp,lParam DRAWDEBUG_ARG)){
                     found = true;

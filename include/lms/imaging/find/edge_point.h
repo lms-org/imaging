@@ -15,7 +15,7 @@ public:
     enum class EdgeType {LOW_HIGH, HIGH_LOW, PLANE};
 
     struct EdgePointParam{
-        EdgePointParam():x(0),y(0),target(nullptr),searchLength(0),searchAngle(0),searchType(EdgeType::PLANE),sobelThreshold(0),gaussBuffer(nullptr),verify(false){
+        EdgePointParam():x(0),y(0),target(nullptr),searchLength(0),searchAngle(0),searchType(EdgeType::PLANE),sobelThreshold(0),gaussBuffer(nullptr),verify(false),preferVerify(false){
         }
 
         int x;
@@ -30,6 +30,7 @@ public:
          * @brief verify if true find will try to find it with the old values if the new one don't find anything
          */
         bool verify;
+        bool preferVerify;
     };
 
     typedef EdgePointParam parameterType;

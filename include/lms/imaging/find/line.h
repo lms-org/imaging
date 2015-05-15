@@ -37,6 +37,7 @@ protected:
     std::deque<LinePoint> m_points;
 
     void extend(bool direction DRAWDEBUG);
+    bool verifyPoint(LinePoint &lp, LinePoint::LinePointParam lParam DRAWDEBUG_PARAM);
 };
 
 } //namepsace find

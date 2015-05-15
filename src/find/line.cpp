@@ -87,7 +87,13 @@ bool Line::findPoint(LinePoint &pointToFind,LinePoint::LinePointParam linePointP
     //find first point
     //Draw red cross
     DRAWCROSS(linePointParam.x,linePointParam.y,255,0,0);
-    return pointToFind.find(linePointParam DRAWDEBUG_ARG);
+    bool found =  pointToFind.find(linePointParam DRAWDEBUG_ARG);
+    if(found && m_LineParam.validPoint){
+        found = m_LineParam.validPoint(pointToFind);
+        //TODO
+        //float diffAngle = m_LineParam.searchAngle-;
+    }
+    return found;
 }
 /**
   * TODO es kommt auf die suchrichtung an, was direction==true oder false tut, ab dem winkel > 90 dreht sich die suchrichtung im Bild um. Veranschaulicht wird das durch einen Kreis wobei man in den beiden oberen Quadranten sucht.

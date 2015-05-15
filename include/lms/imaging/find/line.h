@@ -4,6 +4,7 @@
 #include <lms/imaging/find/line_point.h>
 #include <deque>
 #include <lms/imaging/draw_debug.h>
+#include <functional>
 namespace lms{
 namespace imaging{
 namespace find{
@@ -11,7 +12,7 @@ namespace find{
 class Line{
 public:
     struct LineParam:public LinePoint::LinePointParam{
-        LineParam():stepLengthMin(0),stepLengthMax(0),maxLength(INFINITY),approxEdge(false),lineWidthTransMultiplier(2){
+        LineParam():stepLengthMin(0),stepLengthMax(0),maxLength(INFINITY),approxEdge(false),lineWidthTransMultiplier(2),validPoint(nullptr){
         }
         float stepLengthMin;
         float stepLengthMax;
@@ -21,6 +22,10 @@ public:
          * @brief lineWidthTransMultiplier value that is multiplied with the stepLengthMax to move the last found point to find the new point
          */
         float lineWidthTransMultiplier;
+        /**
+         * @brief validPoint return true if the point is valid and should be added
+         */
+        std::function<bool(lms::imaging::find::LinePoint&)> validPoint;
     };
 
     typedef LineParam parameterType;

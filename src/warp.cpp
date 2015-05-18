@@ -17,8 +17,8 @@ namespace imaging {
 bool C2V(const lms::math::vertex2i* lp, lms::math::vertex2f* rp, float *angle_out) {
     float xtemp, ytemp, dxdx, dydy, dxdy, dydx;
 
-    int x = (*lp)[0];
-    int y = (*lp)[1];
+    int x = lp->x;
+    int y = lp->y;
 
     //Quentin LUT: Umrechnung in ein unverzerrtes Zentralprojektionsbild.
     ///TODO: Image Size
@@ -39,8 +39,8 @@ bool C2V(const lms::math::vertex2i* lp, lms::math::vertex2f* rp, float *angle_ou
     float a = xtemp * tb2a[0] + ytemp * tb2a[1] + tb2a[2];
     float b = xtemp * tb2a[3] + ytemp * tb2a[4] + tb2a[5];
     float c = xtemp * tb2a[6] + ytemp * tb2a[7] + tb2a[8];
-    (*rp)[0] = (a / c);  ///To M
-    (*rp)[1] = (b / c);  ///To M
+    rp->x = (a / c);  ///To M
+    rp->y = (b / c);  ///To M
 
     if (angle_out != nullptr) {
         float phi = LP_Angle_to_rad(*angle_out);
@@ -58,8 +58,8 @@ bool C2V(const lms::math::vertex2i* lp, lms::math::vertex2f* rp, float *angle_ou
 bool V2C(const lms::math::vertex2f* rp, lms::math::vertex2i* px, float *direction) {
 
     //Felix: Umrechnung der Autokoordinaten ins unverzerrte Bild
-    float x = (float)(*rp)[0];
-    float y = (float)(*rp)[1];
+    float x = (float)rp->x;
+    float y = (float)rp->y;
     float a = x * ta2b[0] + y * ta2b[1] + ta2b[2];
     float b = x * ta2b[3] + y * ta2b[4] + ta2b[5];
     float c = x * ta2b[6] + y * ta2b[7] + ta2b[8];
@@ -67,8 +67,8 @@ bool V2C(const lms::math::vertex2f* rp, lms::math::vertex2i* px, float *directio
     y = b / c;
     const float xNorm = x, yNorm = y;
     n2d(xNorm, yNorm, x, y);
-    (*px)[0] = (int16_t)x;
-    (*px)[1] = (int16_t)y;
+    px->x = (int16_t)x;
+    px->y = (int16_t)y;
 
     if(direction != nullptr) {
         float phi = *direction*(M_PI/(180.));
@@ -129,17 +129,17 @@ void imageV2C(const Image &input, Image &output) {
 
     for(int y = 0; y < textureSize; y++) {
         for(int x = 0; x < textureSize; x++) {
-            in[0] = planeSize / (float)textureSize * (float) x;
-            in[1] = -planeSize / (float)textureSize
+            in.x = planeSize / (float)textureSize * (float) x;
+            in.y = -planeSize / (float)textureSize
                     * (float)(y - (float)textureSize / 2.);
 
             success = V2C(&in, &out);
 
             //std::cout << x << " " << y << " -> " << out[0] << " " << out[1] << std::endl;
 
-            if(success && out[0] >= 0 && out[0] < input.width()
-                    && out[1] >= 0 && out[1] < input.height()) {
-                color = *(input.data() + out[1] * input.width() + out[0]);
+            if(success && out.x >= 0 && out.x < input.width()
+                    && out.y >= 0 && out.y < input.height()) {
+                color = *(input.data() + out.y * input.width() + out.x);
             } else {
                 color = 127;
             }

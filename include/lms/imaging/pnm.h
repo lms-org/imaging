@@ -15,8 +15,6 @@ namespace imaging {
  */
 bool savePGM(const Image &image, const std::string &path);
 
-bool readPGM(Image &image, const std::string &path);
-
 /**
  * @brief Save a Portable Pixmap. This works only for images
  * in the format Format::RGB.
@@ -27,7 +25,17 @@ bool readPGM(Image &image, const std::string &path);
  */
 bool savePPM(const Image &image, const std::string &path);
 
-bool readPPM(Image &image, const std::string &path);
+/**
+ * @brief Read a file as Portable Graymap or Portable Pixmap.
+ *
+ * PGM files will result in GREY images.
+ * PPM files will result in RGB images.
+ *
+ * @param image image data to put
+ * @param path file to load
+ * @return true if successful, otherwise false
+ */
+bool readPNM(Image &image, const std::string &path);
 
 }  // namespace imaging
 }  // namespace lms

@@ -35,8 +35,7 @@ bool pnmHelperSave(const Image &image, const std::string &path,
     return true;
 }
 
-bool pnmHelperRead(Image &image, const std::string &path,
-                   Format checkFormat, const std::string &type) {
+bool readPNM(Image &image, const std::string &path) {
     std::ifstream is(path, std::ios::binary);
 
     if(! is.is_open()) {
@@ -44,7 +43,17 @@ bool pnmHelperRead(Image &image, const std::string &path,
     }
 
     std::string magicLine;
-    if(!std::getline(is, magicLine) || magicLine != type) {
+    if(!std::getline(is, magicLine)) {
+        return false;
+    }
+
+    Format format;
+
+    if(magicLine == "P5") {
+        format = Format::GREY;
+    } else if(magicLine == "P6") {
+        format = Format::RGB;
+    } else {
         return false;
     }
 
@@ -56,7 +65,7 @@ bool pnmHelperRead(Image &image, const std::string &path,
         return false;
     }
 
-    image.resize(width, height, checkFormat);
+    image.resize(width, height, format);
 
     // skip one byte (this will be a whitespace character)
     is.ignore(1);
@@ -65,7 +74,7 @@ bool pnmHelperRead(Image &image, const std::string &path,
     // TODO or use is.read() ...
     std::copy_n(
             std::istreambuf_iterator<char>(is),
-            width * height,
+            image.size(),
             reinterpret_cast<char*>(image.data()));
     is.close();
 
@@ -76,16 +85,8 @@ bool savePGM(const Image &image, const std::string &path) {
     return pnmHelperSave(image, path, Format::GREY, "P5");
 }
 
-bool readPGM(Image &image, const std::string &path) {
-    return pnmHelperRead(image, path, Format::GREY, "P5");
-}
-
 bool savePPM(const Image &image, const std::string &path) {
     return pnmHelperSave(image, path, Format::RGB, "P6");
-}
-
-bool readPPM(Image &image, const std::string &path) {
-    return pnmHelperRead(image, path, Format::RGB, "P6");
 }
 
 }  // namespace imaging

@@ -11,8 +11,8 @@
 namespace lms {
 namespace imaging {
 
-#define CALI_WIDTH 640
-#define CALI_HEIGHT 480
+#define CALI_WIDTH 752
+#define CALI_HEIGHT 410
 
 bool C2V(const lms::math::vertex2i* lp, lms::math::vertex2f* rp, float *angle_out) {
     float xtemp, ytemp, dxdx, dydy, dxdy, dydx;

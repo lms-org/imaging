@@ -29,13 +29,13 @@ bool C2V(const lms::math::vertex2i* lp, lms::math::vertex2f* rp, float *angle_ou
     //Quentin LUT: Umrechnung in ein unverzerrtes Zentralprojektionsbild.
     ///TODO: Image Size
     if (x >= 0 && y >= 0 && x < defaultContent.CALI_WIDTH - 1 && y < defaultContent.CALI_HEIGHT - 1) {
-        xtemp = defaultContent.d2nX[(int) x+((int) y)*defaultContent.CALI_WIDTH];
-        ytemp = defaultContent.d2nY[(int) x+((int) y)*defaultContent.CALI_WIDTH];
+        xtemp = defaultContent.d2nX[x*defaultContent.CALI_WIDTH+y];
+        ytemp = defaultContent.d2nY[x*defaultContent.CALI_WIDTH+y];
 
-        dxdx = defaultContent.d2nX[(int) x + 1+((int)y)*defaultContent.CALI_WIDTH] - xtemp;
-        dxdy = defaultContent.d2nX[(int) x+((int) y + 1)*defaultContent.CALI_WIDTH] - xtemp;
-        dydx = defaultContent.d2nY[(int) x + 1+((int)y)*defaultContent.CALI_WIDTH] - ytemp;
-        dydy = defaultContent.d2nY[(int) x+((int) y + 1)*defaultContent.CALI_WIDTH] - ytemp;
+        dxdx = defaultContent.d2nX[(x + 1)*defaultContent.CALI_WIDTH+y] - xtemp;
+        dxdy = defaultContent.d2nX[x*defaultContent.CALI_WIDTH+y + 1] - xtemp;
+        dydx = defaultContent.d2nY[(x + 1)*defaultContent.CALI_WIDTH+y] - ytemp;
+        dydy = defaultContent.d2nY[x*defaultContent.CALI_WIDTH+ y + 1] - ytemp;
 
     } else {
         return false;

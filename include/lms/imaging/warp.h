@@ -44,8 +44,8 @@ struct WarpContent{
     }
 
     void fromConfig(const lms::type::ModuleConfig *cali){
-        CALI_WIDTH = cali->get<int>("row");
-        CALI_HEIGHT = cali->get<int>("col");
+        CALI_WIDTH = cali->get<int>("col");
+        CALI_HEIGHT = cali->get<int>("row");
         ta2b = cali->getArray<float>("world2cam");
         tb2a = cali->getArray<float>("cam2world");
         d2nX = cali->getArray<float>("d2nX");
@@ -59,6 +59,12 @@ struct WarpContent{
         K3 = cali->get<float>("K3");
         K4 = cali->get<float>("K4");
         K5 = cali->get<float>("K5");
+
+        //debug
+
+        std::cout << "row: " <<CALI_WIDTH << " " << " col: " << CALI_HEIGHT << std::endl;
+        std::cout << "t2: " <<ta2b.size() << " " << tb2a.size() << std::endl;
+        std::cout << "d2nX: " <<d2nX.size() << " " << " d2nY: " << d2nY.size() << std::endl;
     }
 
 };

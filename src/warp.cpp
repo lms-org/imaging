@@ -1,20 +1,26 @@
 #include <math.h>
 
-#include "lms/imaging/magic/n2d.h"
-#include "lms/imaging/magic/lutx.h"
-#include "lms/imaging/magic/luty.h"
-#include "lms/imaging/magic/cali_ab.h"
-
 #include "lms/imaging/warp.h"
 #include "lms/math/vertex.h"
+#include "lms/type/module_config.h"
+#include "lms/framework.h"
 
 namespace lms {
 namespace imaging {
 
-#define CALI_WIDTH 752
-#define CALI_HEIGHT 410
+//TODO Warum kann man die beiden nicht in die Header verschieben?
+WarpContent defaultContent;
+bool defaultSet = false;
+
+void setDefaultWarpContent(){
+    defaultSet = true;
+    defaultContent.fromConfigDirectory();
+}
 
 bool C2V(const lms::math::vertex2i* lp, lms::math::vertex2f* rp, float *angle_out) {
+    if(!defaultSet){
+        setDefaultWarpContent();
+    }
     float xtemp, ytemp, dxdx, dydy, dxdy, dydx;
 
     int x = lp->x;
@@ -22,23 +28,23 @@ bool C2V(const lms::math::vertex2i* lp, lms::math::vertex2f* rp, float *angle_ou
 
     //Quentin LUT: Umrechnung in ein unverzerrtes Zentralprojektionsbild.
     ///TODO: Image Size
-    if (x >= 0 && y >= 0 && x < CALI_WIDTH - 1 && y < CALI_HEIGHT - 1) {
-        xtemp = d2nX[(int) x][(int) y];
-        ytemp = d2nY[(int) x][(int) y];
+    if (x >= 0 && y >= 0 && x < defaultContent.CALI_WIDTH - 1 && y < defaultContent.CALI_HEIGHT - 1) {
+        xtemp = defaultContent.d2nX[(int) x+((int) y)*defaultContent.CALI_WIDTH];
+        ytemp = defaultContent.d2nY[(int) x+((int) y)*defaultContent.CALI_WIDTH];
 
-        dxdx = d2nX[(int) x + 1][(int) y] - xtemp;
-        dxdy = d2nX[(int) x][(int) y + 1] - xtemp;
-        dydx = d2nY[(int) x + 1][(int) y] - ytemp;
-        dydy = d2nY[(int) x][(int) y + 1] - ytemp;
+        dxdx = defaultContent.d2nX[(int) x + 1+((int)y)*defaultContent.CALI_WIDTH] - xtemp;
+        dxdy = defaultContent.d2nX[(int) x+((int) y + 1)*defaultContent.CALI_WIDTH] - xtemp;
+        dydx = defaultContent.d2nY[(int) x + 1+((int)y)*defaultContent.CALI_WIDTH] - ytemp;
+        dydy = defaultContent.d2nY[(int) x+((int) y + 1)*defaultContent.CALI_WIDTH] - ytemp;
 
     } else {
         return false;
     }
 
     //Felix: Umrechnung des unverzerrten bilds in Auto/Straßenkoordinaten.
-    float a = xtemp * tb2a[0] + ytemp * tb2a[1] + tb2a[2];
-    float b = xtemp * tb2a[3] + ytemp * tb2a[4] + tb2a[5];
-    float c = xtemp * tb2a[6] + ytemp * tb2a[7] + tb2a[8];
+    float a = xtemp * defaultContent.tb2a[0] + ytemp * defaultContent.tb2a[1] + defaultContent.tb2a[2];
+    float b = xtemp * defaultContent.tb2a[3] + ytemp * defaultContent.tb2a[4] + defaultContent.tb2a[5];
+    float c = xtemp * defaultContent.tb2a[6] + ytemp * defaultContent.tb2a[7] + defaultContent.tb2a[8];
     rp->x = (a / c);  ///To M
     rp->y = (b / c);  ///To M
 
@@ -48,21 +54,23 @@ bool C2V(const lms::math::vertex2i* lp, lms::math::vertex2f* rp, float *angle_ou
         float sphi = sin(phi);
         float dxtemp = dxdx * cphi + dxdy*sphi;
         float dytemp = dydx * cphi + dydy*sphi;
-        float dx = ((tb2a[0] * c - a * tb2a[6]) * dxtemp + (tb2a[1] * c - a * tb2a[7]) * dytemp) / (c * c);
-        float dy = ((tb2a[3] * c - b * tb2a[6]) * dxtemp + (tb2a[4] * c - b * tb2a[7]) * dytemp) / (c * c);
+        float dx = ((defaultContent.tb2a[0] * c - a * defaultContent.tb2a[6]) * dxtemp + (defaultContent.tb2a[1] * c - a * defaultContent.tb2a[7]) * dytemp) / (c * c);
+        float dy = ((defaultContent.tb2a[3] * c - b * defaultContent.tb2a[6]) * dxtemp + (defaultContent.tb2a[4] * c - b * defaultContent.tb2a[7]) * dytemp) / (c * c);
         *angle_out = atan2(dy, dx);
     }
     return true;
 }
 
 bool V2C(const lms::math::vertex2f* rp, lms::math::vertex2i* px, float *direction) {
-
+    if(!defaultSet){
+        setDefaultWarpContent();
+    }
     //Felix: Umrechnung der Autokoordinaten ins unverzerrte Bild
     float x = (float)rp->x;
     float y = (float)rp->y;
-    float a = x * ta2b[0] + y * ta2b[1] + ta2b[2];
-    float b = x * ta2b[3] + y * ta2b[4] + ta2b[5];
-    float c = x * ta2b[6] + y * ta2b[7] + ta2b[8];
+    float a = x * defaultContent.ta2b[0] + y * defaultContent.ta2b[1] + defaultContent.ta2b[2];
+    float b = x * defaultContent.ta2b[3] + y * defaultContent.ta2b[4] + defaultContent.ta2b[5];
+    float c = x * defaultContent.ta2b[6] + y * defaultContent.ta2b[7] + defaultContent.ta2b[8];
     x = a / c;
     y = b / c;
     const float xNorm = x, yNorm = y;
@@ -72,8 +80,8 @@ bool V2C(const lms::math::vertex2f* rp, lms::math::vertex2i* px, float *directio
 
     if(direction != nullptr) {
         float phi = *direction*(M_PI/(180.));
-        float dx = ((ta2b[0] * c - a * ta2b[6]) * cos(phi)+(ta2b[1] * c - a * ta2b[7]) * sin(phi)) / (c * c);
-        float dy = ((ta2b[3] * c - b * ta2b[6]) * cos(phi)+(ta2b[4] * c - b * ta2b[7]) * sin(phi)) / (c * c);
+        float dx = ((defaultContent.ta2b[0] * c - a * defaultContent.ta2b[6]) * cos(phi)+(defaultContent.ta2b[1] * c - a * defaultContent.ta2b[7]) * sin(phi)) / (c * c);
+        float dy = ((defaultContent.ta2b[3] * c - b * defaultContent.ta2b[6]) * cos(phi)+(defaultContent.ta2b[4] * c - b * defaultContent.ta2b[7]) * sin(phi)) / (c * c);
         phi = atan2(dy, dx);
 
         //Quentin Funktion: Umrechnung von unverzerrten Bilkoordinaten in verzerrte Bildkoordinaten.
@@ -95,19 +103,22 @@ int8_t rad_to_angle_lp(float r) {
 }
 
 bool n2d(const float & xn, const float & yn, float & xdist, float & ydist) {
-    const float xnorm =(float)(xn-Cx)/Fx, ynorm = (float)(yn-Cy)/Fy;
+    if(!defaultSet){
+        setDefaultWarpContent();
+    }
+    const float xnorm =(float)(xn-defaultContent.Cx)/defaultContent.Fx, ynorm = (float)(yn-defaultContent.Cy)/defaultContent.Fy;
     float r2 = xnorm*xnorm + ynorm*ynorm;
-    float dist = 1 + K1*r2 + K2*r2*r2;
-    float dx = 2*K3*xnorm*ynorm + K4*(r2+xnorm*xnorm);
-    float dy = K3*(r2+ynorm*ynorm) + 2*K4*xnorm*ynorm;
+    float dist = 1 + defaultContent.K1*r2 + defaultContent.K2*r2*r2;
+    float dx = 2*defaultContent.K3*xnorm*ynorm + defaultContent.K4*(r2+xnorm*xnorm);
+    float dy = defaultContent.K3*(r2+ynorm*ynorm) + 2*defaultContent.K4*xnorm*ynorm;
 
     // Distortion
     xdist = dist*xnorm + dx;
     ydist = dist*ynorm + dy;
 
     // Camera position
-    xdist = Fx*xdist + Cx;
-    ydist = Fy*ydist + Cy;
+    xdist = defaultContent.Fx*xdist + defaultContent.Cx;
+    ydist = defaultContent.Fy*ydist + defaultContent.Cy;
 
     return true;
 }

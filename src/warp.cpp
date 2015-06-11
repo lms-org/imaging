@@ -33,25 +33,19 @@ bool C2V(const lms::math::vertex2i* lp, lms::math::vertex2f* rp) {
         return false;
     }
     //Man nimmt den punkt aus der lookup-table zum entzerren
-    int index = x*defaultContent.CALI_WIDTH+y;
+    int index = x*defaultContent.CALI_HEIGHT+y;
 
     xtemp = defaultContent.d2nX[index];
     ytemp = defaultContent.d2nY[index];
 
-    std::cout <<"lookup Pos: " << xtemp << " " << ytemp <<std::endl;
-    std::cout <<"test: " <<xtemp * defaultContent.cam2world[0] << " " <<ytemp * defaultContent.cam2world[1] << " "<<defaultContent.cam2world[2]<< std::endl;
-    std::cout <<"test: " <<xtemp * defaultContent.cam2world[3] << " " <<ytemp * defaultContent.cam2world[4] << " "<<defaultContent.cam2world[5]<< std::endl;
-    std::cout <<"test: " <<xtemp * defaultContent.cam2world[6] << " " <<ytemp * defaultContent.cam2world[7] << " "<<defaultContent.cam2world[8]<< std::endl;
-    //Felix: Umrechnung des unverzerrten bilds in Auto/Straßenkoordinaten.
+   //Felix: Umrechnung des unverzerrten bilds in Auto/Straßenkoordinaten.
     //fail bei 752 * 410 sind xtemp und ytemp so klein, dass a,b,c nur von dem letzten summanden abhängen
     double a = xtemp * defaultContent.cam2world[0] + ytemp * defaultContent.cam2world[1] + defaultContent.cam2world[2];
     double b = xtemp * defaultContent.cam2world[3] + ytemp * defaultContent.cam2world[4] + defaultContent.cam2world[5];
     double c = xtemp * defaultContent.cam2world[6] + ytemp * defaultContent.cam2world[7] + defaultContent.cam2world[8];
 
-    std::cout <<"OUTPUT ABC: " << a << " "<<b << " " <<c << std::endl;
     rp->x = (a / c);  ///To M
     rp->y = (b / c);  ///To M
-    std::cout <<"OUTPUT WARP:" << rp->x << " "<<rp->y<<std::endl;
     return true;
 }
 
@@ -126,8 +120,6 @@ void imageV2C(const Image &input, Image &output) {
                     * (float)(y - (float)textureSize / 2.);
 
             success = V2C(&in, &out);
-
-            //std::cout << x << " " << y << " -> " << out[0] << " " << out[1] << std::endl;
 
             if(success && out.x >= 0 && out.x < input.width()
                     && out.y >= 0 && out.y < input.height()) {

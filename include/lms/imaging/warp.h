@@ -48,6 +48,7 @@ struct WarpContent{
     float K5;
 
     void fromConfigDirectory(){
+        //fromHeader();
         fromConfigFile(lms::Framework::configsDirectory+"/camera/cali.lconf");
     }
 
@@ -55,6 +56,69 @@ struct WarpContent{
         lms::type::ModuleConfig mc;
         mc.loadFromFile(pathToConfig);
         fromConfig(&mc);
+    }
+
+    void fromHeader(){
+#include "magic/cali_ab.h"
+#include "magic/lutx.h"
+#include "magic/luty.h"
+#include "magic/n2d.h"
+
+        //load from headers....
+        /*
+        CALI_WIDTH = 320;
+        CALI_HEIGHT = 240;
+        */
+        //Ueye
+
+        CALI_WIDTH = 752;
+        CALI_HEIGHT = 410;
+
+        world2cam.clear();
+        for(float f:TA2B){
+            world2cam.push_back(f);
+        }
+        cam2world.clear();
+        for(float f:TB2A){
+            cam2world.push_back(f);
+        }
+        for(int x = 0; x < CALI_WIDTH; x++){
+            for(int y = 0; y< CALI_HEIGHT; y++){
+                d2nX.push_back(D2NX[x][y]);
+            }
+        }
+        for(int x = 0; x < CALI_WIDTH; x++){
+            for(int y = 0; y< CALI_HEIGHT; y++){
+                d2nY.push_back(D2NY[x][y]);
+            }
+        }
+        Fx = Fx_;
+        Fy = Fy_;
+        Cx = Cx_;
+        Cy = Cy_;
+        K1 = K1_;
+        K2 = K2_;
+        K3 = K3_;
+        K4 = K4_;
+        K5 = K5_;
+
+        //debug
+        //debug();
+    }
+
+    void debug(){
+        std::cout<<"col ="<< CALI_WIDTH<<"\n";
+        std::cout<<"row ="<< CALI_HEIGHT<<"\n";
+        std::cout<<"d2nXSize: " <<d2nX.size()<<"\n";
+        std::cout<<"d2nYSize: " <<d2nY.size()<<"\n";
+
+        lms::math::vertex2i vi;
+        const lms::math::vertex2f world(0.4,0);
+        lms::math::vertex2f worldCheck;
+        V2C(&world,&vi);
+        C2V(&vi,&worldCheck);
+        std::cout<<"Warp cali check: " << world.x <<" | "<< worldCheck.x << " ; " <<world.y <<" | "<< worldCheck.y<< std::endl;
+
     }
 
     void fromConfig(const lms::type::ModuleConfig *cali){
@@ -74,19 +138,9 @@ struct WarpContent{
         K4 = cali->get<float>("K4");
         K5 = cali->get<float>("K5");
 
-        std::cout<<"col ="<< CALI_WIDTH<<"\n";
-        std::cout<<"row ="<< CALI_HEIGHT<<"\n";
-        std::cout<<"d2nXSize: " <<d2nX.size()<<"\n";
-        std::cout<<"d2nYSize: " <<d2nY.size()<<"\n";
-
-        lms::math::vertex2i vi;
-        const lms::math::vertex2f world(0.4,0);
-        lms::math::vertex2f worldCheck;
-        V2C(&world,&vi);
-        C2V(&vi,&worldCheck);
-        std::cout<<"Warp cali check: " << world.x <<" | "<< worldCheck.x << " ; " <<world.y <<" | "<< worldCheck.y<< std::endl;
 
         //debug
+        //debug();
         return;
     }
 
@@ -131,7 +185,6 @@ struct WarpContent{
         for(uint i = 0; i < cam2world.size(); i++){
             s<<cam2world[i]<<",";
         }
-
 
         s.close();
     }

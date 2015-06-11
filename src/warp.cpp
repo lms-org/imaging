@@ -15,81 +15,62 @@ bool defaultSet = false;
 void setDefaultWarpContent(){
     defaultSet = true;
     defaultContent.fromConfigDirectory();
+
 }
 
-bool C2V(const lms::math::vertex2i* lp, lms::math::vertex2f* rp, float *angle_out) {
+bool C2V(const lms::math::vertex2i* lp, lms::math::vertex2f* rp) {
     if(!defaultSet){
         setDefaultWarpContent();
     }
-    float xtemp, ytemp, dxdx, dydy, dxdy, dydx;
+    double xtemp, ytemp;
 
     int x = lp->x;
     int y = lp->y;
 
     //Quentin LUT: Umrechnung in ein unverzerrtes Zentralprojektionsbild.
     ///TODO: Image Size
-    if (x >= 0 && y >= 0 && x < defaultContent.CALI_WIDTH - 1 && y < defaultContent.CALI_HEIGHT - 1) {
-        xtemp = defaultContent.d2nX[x*defaultContent.CALI_WIDTH+y];
-        ytemp = defaultContent.d2nY[x*defaultContent.CALI_WIDTH+y];
-
-        dxdx = defaultContent.d2nX[(x + 1)*defaultContent.CALI_WIDTH+y] - xtemp;
-        dxdy = defaultContent.d2nX[x*defaultContent.CALI_WIDTH+y + 1] - xtemp;
-        dydx = defaultContent.d2nY[(x + 1)*defaultContent.CALI_WIDTH+y] - ytemp;
-        dydy = defaultContent.d2nY[x*defaultContent.CALI_WIDTH+ y + 1] - ytemp;
-
-    } else {
+    if (x <  0 || y<0 || x >= defaultContent.CALI_WIDTH|| y >= defaultContent.CALI_HEIGHT) {
         return false;
     }
+    //Man nimmt den punkt aus der lookup-table zum entzerren
+    int index = x*defaultContent.CALI_WIDTH+y;
 
+    xtemp = defaultContent.d2nX[index];
+    ytemp = defaultContent.d2nY[index];
+
+    std::cout <<"lookup Pos: " << xtemp << " " << ytemp <<std::endl;
+    std::cout <<"test: " <<xtemp * defaultContent.cam2world[0] << " " <<ytemp * defaultContent.cam2world[1] << " "<<defaultContent.cam2world[2]<< std::endl;
+    std::cout <<"test: " <<xtemp * defaultContent.cam2world[3] << " " <<ytemp * defaultContent.cam2world[4] << " "<<defaultContent.cam2world[5]<< std::endl;
+    std::cout <<"test: " <<xtemp * defaultContent.cam2world[6] << " " <<ytemp * defaultContent.cam2world[7] << " "<<defaultContent.cam2world[8]<< std::endl;
     //Felix: Umrechnung des unverzerrten bilds in Auto/Straßenkoordinaten.
-    float a = xtemp * defaultContent.tb2a[0] + ytemp * defaultContent.tb2a[1] + defaultContent.tb2a[2];
-    float b = xtemp * defaultContent.tb2a[3] + ytemp * defaultContent.tb2a[4] + defaultContent.tb2a[5];
-    float c = xtemp * defaultContent.tb2a[6] + ytemp * defaultContent.tb2a[7] + defaultContent.tb2a[8];
+    //fail bei 752 * 410 sind xtemp und ytemp so klein, dass a,b,c nur von dem letzten summanden abhängen
+    double a = xtemp * defaultContent.cam2world[0] + ytemp * defaultContent.cam2world[1] + defaultContent.cam2world[2];
+    double b = xtemp * defaultContent.cam2world[3] + ytemp * defaultContent.cam2world[4] + defaultContent.cam2world[5];
+    double c = xtemp * defaultContent.cam2world[6] + ytemp * defaultContent.cam2world[7] + defaultContent.cam2world[8];
+
+    std::cout <<"OUTPUT ABC: " << a << " "<<b << " " <<c << std::endl;
     rp->x = (a / c);  ///To M
     rp->y = (b / c);  ///To M
-
-    if (angle_out != nullptr) {
-        float phi = LP_Angle_to_rad(*angle_out);
-        float cphi = cos(phi);
-        float sphi = sin(phi);
-        float dxtemp = dxdx * cphi + dxdy*sphi;
-        float dytemp = dydx * cphi + dydy*sphi;
-        float dx = ((defaultContent.tb2a[0] * c - a * defaultContent.tb2a[6]) * dxtemp + (defaultContent.tb2a[1] * c - a * defaultContent.tb2a[7]) * dytemp) / (c * c);
-        float dy = ((defaultContent.tb2a[3] * c - b * defaultContent.tb2a[6]) * dxtemp + (defaultContent.tb2a[4] * c - b * defaultContent.tb2a[7]) * dytemp) / (c * c);
-        *angle_out = atan2(dy, dx);
-    }
+    std::cout <<"OUTPUT WARP:" << rp->x << " "<<rp->y<<std::endl;
     return true;
 }
 
-bool V2C(const lms::math::vertex2f* rp, lms::math::vertex2i* px, float *direction) {
+bool V2C(const lms::math::vertex2f* rp, lms::math::vertex2i* px) {
     if(!defaultSet){
         setDefaultWarpContent();
     }
     //Felix: Umrechnung der Autokoordinaten ins unverzerrte Bild
     float x = (float)rp->x;
     float y = (float)rp->y;
-    float a = x * defaultContent.ta2b[0] + y * defaultContent.ta2b[1] + defaultContent.ta2b[2];
-    float b = x * defaultContent.ta2b[3] + y * defaultContent.ta2b[4] + defaultContent.ta2b[5];
-    float c = x * defaultContent.ta2b[6] + y * defaultContent.ta2b[7] + defaultContent.ta2b[8];
+    float a = x * defaultContent.world2cam[0] + y * defaultContent.world2cam[1] + defaultContent.world2cam[2];
+    float b = x * defaultContent.world2cam[3] + y * defaultContent.world2cam[4] + defaultContent.world2cam[5];
+    float c = x * defaultContent.world2cam[6] + y * defaultContent.world2cam[7] + defaultContent.world2cam[8];
     x = a / c;
     y = b / c;
     const float xNorm = x, yNorm = y;
     n2d(xNorm, yNorm, x, y);
     px->x = (int16_t)x;
     px->y = (int16_t)y;
-
-    if(direction != nullptr) {
-        float phi = *direction*(M_PI/(180.));
-        float dx = ((defaultContent.ta2b[0] * c - a * defaultContent.ta2b[6]) * cos(phi)+(defaultContent.ta2b[1] * c - a * defaultContent.ta2b[7]) * sin(phi)) / (c * c);
-        float dy = ((defaultContent.ta2b[3] * c - b * defaultContent.ta2b[6]) * cos(phi)+(defaultContent.ta2b[4] * c - b * defaultContent.ta2b[7]) * sin(phi)) / (c * c);
-        phi = atan2(dy, dx);
-
-        //Quentin Funktion: Umrechnung von unverzerrten Bilkoordinaten in verzerrte Bildkoordinaten.
-        const float xNormPdx = xNorm + cos(phi), yNormPdy = yNorm + sin(phi);
-        n2d(xNormPdx, yNormPdy, dx, dy);
-        phi = atan2(dy - (y), dx - (x));
-        *direction = ((180.)/M_PI)*phi;
-    }
 
     return true;
 }

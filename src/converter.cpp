@@ -222,11 +222,12 @@ void scaleUp(const Image &input, Image &output, int factor) {
     const std::uint8_t *src = input.data();
     std::uint8_t *dst = output.data();
 
-    int offset_dst = 0;
+    int offset_dst = 0, offset_dst_copyrow;
     // copy every pixel and every row factor times
     int offset_src_row = 0, offset_src_pixel, offset_src_byte;
     for (int row=input.height(); row>0; row--) {
         offset_src_pixel = offset_src_row;
+        offset_dst_copyrow = offset_dst;
 
         // copy every pixel factor times in first row
         for(int pixel=input.width(); pixel>0; pixel--) {
@@ -241,7 +242,7 @@ void scaleUp(const Image &input, Image &output, int factor) {
 
         // replicate last row (factor-1) times
         for (int copyrow=factor-1; copyrow>0; copyrow--) {
-            std::memcpy(dst+offset_dst, src+offset_src_row, new_width*bpp);
+            std::memcpy(dst+offset_dst, dst+offset_dst_copyrow, new_width*bpp);
             offset_dst += new_width*bpp;
         }
         offset_src_row += input.width()*bpp;

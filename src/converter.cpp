@@ -1,4 +1,5 @@
 #include "lms/imaging/converter.h"
+#include <cstring>
 
 namespace lms {
 namespace imaging {
@@ -168,6 +169,82 @@ void convertRGBtoBGRA(const std::uint8_t *src, int srcSize, std::uint8_t *dst) {
         *dst++ = src[0];  // R
         *dst++ = 255;     // A
         src += 3;
+    }
+}
+
+void scaleDown(const Image &input, Image &output, int factor) {
+    if (factor < 1) {
+        return;
+    } else if (factor == 1) {
+        output = input;
+    }
+    int bpp = bytesPerPixel(input.format());
+    int new_width = input.width() / factor;
+    int new_height = input.height() / factor;
+
+    // resize or (if necessary) create new Image
+    output.resize(new_width, new_height, input.format());
+
+    const std::uint8_t *src = input.data();
+    std::uint8_t *dst = output.data();
+
+    int offset_dst = 0;
+    int offset_src_row = 0, offset_src;
+    // skip every factor-th pixel and every factor-th row
+    for (int row=output.height(); row>0; row--) {
+        offset_src = offset_src_row;
+        for (int pixel=output.width(); pixel>0; pixel--) {
+            // copy one pixel
+            for (int byte=bpp; byte>0; byte--) {
+                dst[offset_dst++] = src[offset_src++];
+            }
+            // skip (factor-1) pixels
+            offset_src += bpp*(factor-1);
+        }
+        // skip factor rows
+        offset_src_row += factor*bpp*input.width();
+    }
+}
+
+void scaleUp(const Image &input, Image &output, int factor) {
+    if (factor < 1) {
+        return;
+    } else if (factor == 1) {
+        output = input;
+    }
+    int bpp = bytesPerPixel(input.format());
+    int new_width = input.width() * factor;
+    int new_height = input.height() * factor;
+
+    // resize or (if necessary) create new Image
+    output.resize(new_width, new_height, input.format());
+
+    const std::uint8_t *src = input.data();
+    std::uint8_t *dst = output.data();
+
+    int offset_dst = 0;
+    // copy every pixel and every row factor times
+    int offset_src_row = 0, offset_src_pixel, offset_src_byte;
+    for (int row=input.height(); row>0; row--) {
+        offset_src_pixel = offset_src_row;
+
+        // copy every pixel factor times in first row
+        for(int pixel=input.width(); pixel>0; pixel--) {
+            for (int pixel=factor; pixel>0; pixel--) {
+                offset_src_byte = offset_src_pixel;
+                for (int byte=bpp; byte>0; byte--) {
+                    dst[offset_dst++] = src[offset_src_byte++];
+                }
+            }
+            offset_src_pixel += bpp;
+        }
+
+        // replicate last row (factor-1) times
+        for (int copyrow=factor-1; copyrow>0; copyrow--) {
+            std::memcpy(dst+offset_dst, src+offset_src_row, new_width*bpp);
+            offset_dst += new_width*bpp;
+        }
+        offset_src_row += input.width()*bpp;
     }
 }
 

@@ -1,87 +1,70 @@
 #include <math.h>
 
-#include "lms/imaging/magic/n2d.h"
-#include "lms/imaging/magic/lutx.h"
-#include "lms/imaging/magic/luty.h"
-#include "lms/imaging/magic/cali_ab.h"
-
 #include "lms/imaging/warp.h"
 #include "lms/math/vertex.h"
+#include "lms/type/module_config.h"
+#include "lms/framework.h"
 
 namespace lms {
 namespace imaging {
 
-#define CALI_WIDTH 752
-#define CALI_HEIGHT 410
+//TODO Warum kann man die beiden nicht in die Header verschieben?
+WarpContent defaultContent;
+bool defaultSet = false;
 
-bool C2V(const lms::math::vertex2i* lp, lms::math::vertex2f* rp, float *angle_out) {
-    float xtemp, ytemp, dxdx, dydy, dxdy, dydx;
+void setDefaultWarpContent(){
+    defaultSet = true;
+    defaultContent.fromConfigDirectory();
+
+}
+
+bool C2V(const lms::math::vertex2i* lp, lms::math::vertex2f* rp) {
+    if(!defaultSet){
+        setDefaultWarpContent();
+    }
+    double xtemp, ytemp;
 
     int x = lp->x;
     int y = lp->y;
 
     //Quentin LUT: Umrechnung in ein unverzerrtes Zentralprojektionsbild.
     ///TODO: Image Size
-    if (x >= 0 && y >= 0 && x < CALI_WIDTH - 1 && y < CALI_HEIGHT - 1) {
-        xtemp = d2nX[(int) x][(int) y];
-        ytemp = d2nY[(int) x][(int) y];
-
-        dxdx = d2nX[(int) x + 1][(int) y] - xtemp;
-        dxdy = d2nX[(int) x][(int) y + 1] - xtemp;
-        dydx = d2nY[(int) x + 1][(int) y] - ytemp;
-        dydy = d2nY[(int) x][(int) y + 1] - ytemp;
-
-    } else {
+    if (x <  0 || y<0 || x >= defaultContent.CALI_WIDTH|| y >= defaultContent.CALI_HEIGHT) {
         return false;
     }
+    //Man nimmt den punkt aus der lookup-table zum entzerren
+    int index = x*defaultContent.CALI_HEIGHT+y;
 
-    //Felix: Umrechnung des unverzerrten bilds in Auto/Straßenkoordinaten.
-    float a = xtemp * tb2a[0] + ytemp * tb2a[1] + tb2a[2];
-    float b = xtemp * tb2a[3] + ytemp * tb2a[4] + tb2a[5];
-    float c = xtemp * tb2a[6] + ytemp * tb2a[7] + tb2a[8];
+    xtemp = defaultContent.d2nX[index];
+    ytemp = defaultContent.d2nY[index];
+
+   //Felix: Umrechnung des unverzerrten bilds in Auto/Straßenkoordinaten.
+    //fail bei 752 * 410 sind xtemp und ytemp so klein, dass a,b,c nur von dem letzten summanden abhängen
+    double a = xtemp * defaultContent.cam2world[0] + ytemp * defaultContent.cam2world[1] + defaultContent.cam2world[2];
+    double b = xtemp * defaultContent.cam2world[3] + ytemp * defaultContent.cam2world[4] + defaultContent.cam2world[5];
+    double c = xtemp * defaultContent.cam2world[6] + ytemp * defaultContent.cam2world[7] + defaultContent.cam2world[8];
+
     rp->x = (a / c);  ///To M
     rp->y = (b / c);  ///To M
-
-    if (angle_out != nullptr) {
-        float phi = LP_Angle_to_rad(*angle_out);
-        float cphi = cos(phi);
-        float sphi = sin(phi);
-        float dxtemp = dxdx * cphi + dxdy*sphi;
-        float dytemp = dydx * cphi + dydy*sphi;
-        float dx = ((tb2a[0] * c - a * tb2a[6]) * dxtemp + (tb2a[1] * c - a * tb2a[7]) * dytemp) / (c * c);
-        float dy = ((tb2a[3] * c - b * tb2a[6]) * dxtemp + (tb2a[4] * c - b * tb2a[7]) * dytemp) / (c * c);
-        *angle_out = atan2(dy, dx);
-    }
     return true;
 }
 
-bool V2C(const lms::math::vertex2f* rp, lms::math::vertex2i* px, float *direction) {
-
+bool V2C(const lms::math::vertex2f* rp, lms::math::vertex2i* px) {
+    if(!defaultSet){
+        setDefaultWarpContent();
+    }
     //Felix: Umrechnung der Autokoordinaten ins unverzerrte Bild
     float x = (float)rp->x;
     float y = (float)rp->y;
-    float a = x * ta2b[0] + y * ta2b[1] + ta2b[2];
-    float b = x * ta2b[3] + y * ta2b[4] + ta2b[5];
-    float c = x * ta2b[6] + y * ta2b[7] + ta2b[8];
+    float a = x * defaultContent.world2cam[0] + y * defaultContent.world2cam[1] + defaultContent.world2cam[2];
+    float b = x * defaultContent.world2cam[3] + y * defaultContent.world2cam[4] + defaultContent.world2cam[5];
+    float c = x * defaultContent.world2cam[6] + y * defaultContent.world2cam[7] + defaultContent.world2cam[8];
     x = a / c;
     y = b / c;
     const float xNorm = x, yNorm = y;
     n2d(xNorm, yNorm, x, y);
     px->x = (int16_t)x;
     px->y = (int16_t)y;
-
-    if(direction != nullptr) {
-        float phi = *direction*(M_PI/(180.));
-        float dx = ((ta2b[0] * c - a * ta2b[6]) * cos(phi)+(ta2b[1] * c - a * ta2b[7]) * sin(phi)) / (c * c);
-        float dy = ((ta2b[3] * c - b * ta2b[6]) * cos(phi)+(ta2b[4] * c - b * ta2b[7]) * sin(phi)) / (c * c);
-        phi = atan2(dy, dx);
-
-        //Quentin Funktion: Umrechnung von unverzerrten Bilkoordinaten in verzerrte Bildkoordinaten.
-        const float xNormPdx = xNorm + cos(phi), yNormPdy = yNorm + sin(phi);
-        n2d(xNormPdx, yNormPdy, dx, dy);
-        phi = atan2(dy - (y), dx - (x));
-        *direction = ((180.)/M_PI)*phi;
-    }
 
     return true;
 }
@@ -95,19 +78,22 @@ int8_t rad_to_angle_lp(float r) {
 }
 
 bool n2d(const float & xn, const float & yn, float & xdist, float & ydist) {
-    const float xnorm =(float)(xn-Cx)/Fx, ynorm = (float)(yn-Cy)/Fy;
+    if(!defaultSet){
+        setDefaultWarpContent();
+    }
+    const float xnorm =(float)(xn-defaultContent.Cx)/defaultContent.Fx, ynorm = (float)(yn-defaultContent.Cy)/defaultContent.Fy;
     float r2 = xnorm*xnorm + ynorm*ynorm;
-    float dist = 1 + K1*r2 + K2*r2*r2;
-    float dx = 2*K3*xnorm*ynorm + K4*(r2+xnorm*xnorm);
-    float dy = K3*(r2+ynorm*ynorm) + 2*K4*xnorm*ynorm;
+    float dist = 1 + defaultContent.K1*r2 + defaultContent.K2*r2*r2;
+    float dx = 2*defaultContent.K3*xnorm*ynorm + defaultContent.K4*(r2+xnorm*xnorm);
+    float dy = defaultContent.K3*(r2+ynorm*ynorm) + 2*defaultContent.K4*xnorm*ynorm;
 
     // Distortion
     xdist = dist*xnorm + dx;
     ydist = dist*ynorm + dy;
 
     // Camera position
-    xdist = Fx*xdist + Cx;
-    ydist = Fy*ydist + Cy;
+    xdist = defaultContent.Fx*xdist + defaultContent.Cx;
+    ydist = defaultContent.Fy*ydist + defaultContent.Cy;
 
     return true;
 }
@@ -134,8 +120,6 @@ void imageV2C(const Image &input, Image &output) {
                     * (float)(y - (float)textureSize / 2.);
 
             success = V2C(&in, &out);
-
-            //std::cout << x << " " << y << " -> " << out[0] << " " << out[1] << std::endl;
 
             if(success && out.x >= 0 && out.x < input.width()
                     && out.y >= 0 && out.y < input.height()) {

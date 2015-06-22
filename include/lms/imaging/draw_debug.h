@@ -1,5 +1,5 @@
 //Just for testing
-#define IMAGING_DRAW_DEBUG 1
+//#define IMAGING_DRAW_DEBUG 0
 
 #if IMAGING_DRAW_DEBUG == 1
 
@@ -34,6 +34,7 @@
 #else
     #define DRAWDEBUG
     #define DRAWDEBUG_ARG
+    #define DRAWDEBUG_ARG_N
     #define DRAWDEBUG_CAPTURE
     #define DRAWCROSS(x,y,r,g,b)
     #define DRAWPOINT(x,y,r,g,b)

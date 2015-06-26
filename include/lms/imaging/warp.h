@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <array>
+#include <fstream>
 
 #include "lms/imaging/image.h"
 #include "lms/math/vertex.h"

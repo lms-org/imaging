@@ -1,4 +1,4 @@
-set ( SOURCES 
+set ( SOURCES
     "src/image.cpp"
     "src/static_image.cpp"
     "src/format.cpp"
@@ -9,7 +9,7 @@ set ( SOURCES
     "src/warp.cpp"
 )
 
-set (HEADERS 
+set (HEADERS
     "include/lms/imaging/image.h"
     "include/lms/imaging/static_image.h"
     "include/lms/imaging/format.h"
@@ -29,4 +29,4 @@ set (HEADERS
 include_directories("include")
 
 add_library (imaging SHARED ${SOURCES} ${HEADERS})
-target_link_libraries (imaging PRIVATE lms math_lib)
+target_link_libraries (imaging PRIVATE lmscore math_lib)

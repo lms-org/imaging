@@ -30,3 +30,5 @@ include_directories("include")
 
 add_library (imaging SHARED ${SOURCES} ${HEADERS})
 target_link_libraries (imaging PRIVATE lmscore math_lib)
+
+message("ADDED IMAGING")

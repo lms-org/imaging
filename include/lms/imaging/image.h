@@ -14,6 +14,11 @@
 #include "cereal/cereal.hpp"
 #endif
 
+#ifdef USE_OPENCV
+#include "opencv2/imgproc.hpp"
+#include "opencv2/highgui.hpp"
+#endif
+
 namespace lms {
 namespace imaging {
 
@@ -185,6 +190,10 @@ public:
         resize(width, height, fmt);
         archive(cereal::binary_data(m_data.get(), size * sizeof(std::uint8_t)));
     }
+#endif
+
+#ifdef USE_OPENCV
+    const cv::Mat convertToOpenCVMat() const;
 #endif
 
 private:

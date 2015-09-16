@@ -101,5 +101,21 @@ bool Image::inside(int x, int y) const {
     return (x >= 0 && x < width() && y >= 0 && y < height());
 }
 
+#ifdef USE_OPENCV
+const cv::Mat Image::convertToOpenCVMat() const {
+    int type;
+
+    switch(format()) {
+    case Format::GREY: type = CV_8UC1; break;
+    case Format::RGB: type = CV_8UC3; break;
+    case Format::BGRA: type = CV_8UC4; break;
+    default: type = CV_8U;
+    }
+
+    return cv::Mat(cv::Size(m_width, m_height), type,
+                   const_cast<uint8_t*>(data()), cv::Mat::AUTO_STEP);
+}
+#endif
+
 } // namespace imaging
 } // namespace lms

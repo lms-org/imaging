@@ -54,7 +54,7 @@ struct WarpContent{
     }
 
     void fromConfigFile(std::string pathToConfig){
-        lms::type::ModuleConfig mc;
+        lms::ModuleConfig mc;
         mc.loadFromFile(pathToConfig);
         fromConfig(&mc);
     }
@@ -122,7 +122,7 @@ struct WarpContent{
 
     }
 
-    void fromConfig(const lms::type::ModuleConfig *cali){
+    void fromConfig(const lms::ModuleConfig *cali){
         CALI_WIDTH = cali->get<int>("col");
         CALI_HEIGHT = cali->get<int>("row");
         world2cam = cali->getArray<float>("world2cam");

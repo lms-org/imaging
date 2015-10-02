@@ -1,6 +1,8 @@
 //Just for testing
 //#define IMAGING_DRAW_DEBUG 0
-
+/**
+  *Is set using cmake -DDRAWDEBUG (in imaging_detection/CMakeSharedHeaders.txt
+  */
 #if IMAGING_DRAW_DEBUG == 1
 
 #include <lms/imaging/graphics.h>

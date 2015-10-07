@@ -103,6 +103,7 @@ double imageOperator(const Image &image,int x, int y,const double *mat,int matRo
     double result= 0;
     int x_start = x-matCols/2;
     int y_start = y-matRows/2;
+    //std::cout << "results: x: y: " << x_start <<" , "<< y_start << std::endl;
     //y-axis
     for(int k = 0; k < matRows; k++) {
         y_index = image.width()*(validateY(y_start+k,image.height(),reflectBorders));
@@ -115,8 +116,12 @@ double imageOperator(const Image &image,int x, int y,const double *mat,int matRo
                 continue;
             }
             result += *(image.data() + y_index + x_index)* *(mat+k*matCols+j);
+            //std::cout << std::to_string(*(image.data() + y_index + x_index))<< " * "<< std::to_string(*(mat+k*matCols+j))<< " , ";
         }
+
+        //std::cout << std::endl;
     }
+    //std::cout << std::endl;
     return result/devisor;
 
 }
@@ -205,9 +210,9 @@ int sobelY(int x, int y,const Image &image) {
 
 
 void gaussBox(const Image &input,Image &output,int xMin, int yMin,int xMax, int yMax){
-    for(;xMin <= xMax;xMin++){
+    for(int x = xMin;x <= xMax;x++){
         for(int k = yMin;k <= yMax;k++){
-            gaussPxl(input,output,xMin,k);
+            gaussPxl(input,output,x,k);
         }
     }
 }

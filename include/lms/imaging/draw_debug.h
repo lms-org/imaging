@@ -40,7 +40,7 @@
     #define DRAWDEBUG_CAPTURE
     #define DRAWCROSS(x,y,r,g,b)
     #define DRAWPOINT(x,y,r,g,b)
-    #define DRAWLINE(x1,y1,x2,y2)
+    #define DRAWLINE(x1,y1,x2,y2,r,g,b)
     #define DRAWDEBUG_PARAM
     #define DRAWDEBUG_PARAM_N
 #endif

@@ -4,6 +4,7 @@
   *Is set using cmake -DDRAWDEBUG (in imaging_detection/CMakeSharedHeaders.txt
   */
 #if IMAGING_DRAW_DEBUG == 1
+#define DRAW_DEBUG_USED
 
 #include <lms/imaging/graphics.h>
 	#ifndef DRAWDEBUG

@@ -27,11 +27,12 @@ set (HEADERS
 )
 
 include_directories("include")
-
 add_library (imaging SHARED ${SOURCES} ${HEADERS})
 target_link_libraries (imaging PRIVATE lmscore math_lib)
 
 if(USE_OPENCV)
-    message(STATUS "Use opencv extensions in imaging lib")
-    target_link_libraries(imaging PRIVATE opencv_binding)
+    find_package( OpenCV REQUIRED )
+    include_directories(${OpenCV_INCLUDE_DIRS} )
+    target_link_libraries(imaging PRIVATE ${OpenCV_LIBS})
+    message(STATUS "Use opencv extensions in imaging lib, opencv-libs: " ${OpenCV_LIBS})
 endif()

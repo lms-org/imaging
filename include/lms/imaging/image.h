@@ -15,6 +15,7 @@
 #endif
 
 #ifdef USE_OPENCV
+#include <opencv2/core/base.hpp>
 #include <opencv2/opencv.hpp> //not sure if we really need it
 #endif
 

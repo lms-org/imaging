@@ -50,7 +50,9 @@ struct WarpContent{
 
     void fromConfigDirectory(){
         //fromHeader();
-        fromConfigFile(lms::Framework::configsDirectory+"/camera/cali.lconf");
+        //TODO hardcoded
+        //fromConfigFile(lms::Framework::configsDirectory+"/camera/cali.lconf"); //new car
+        fromConfigFile(lms::Framework::configsDirectory+"/camera/cali_cc15_auto.lconf"); //old car
     }
 
     void fromConfigFile(std::string pathToConfig){

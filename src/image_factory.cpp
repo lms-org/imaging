@@ -130,6 +130,10 @@ double imageOperator(const Image &image,int x, int y,const double *mat,int matRo
 
 
 int validateX(int x,int width,bool reflect){
+    if(x > width)
+        x=width;
+    else if(-x > width)
+        x = 0;
     if(x < 0){
         if(reflect){
             return - x - 1;
@@ -144,7 +148,11 @@ int validateX(int x,int width,bool reflect){
     }
     return x;
 }
-int validateY(int y,int height,bool reflect){
+int validateY(int y,int height,bool reflect){ 
+    if(y > height)
+        y=height;
+    else if(-y > height)
+        y = 0;
     if(y < 0){
         if(reflect){
             return - y - 1;

@@ -7,6 +7,8 @@
 namespace lms {
 namespace imaging {
 
+WarpContent WarpContent::instance;
+
 bool C2V(const lms::math::vertex2i* lp, lms::math::vertex2f* rp) {
     WarpContent& defaultContent = WarpContent::instance;
 

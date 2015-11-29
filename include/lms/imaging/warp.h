@@ -31,6 +31,12 @@ void imageV2C(const Image &input, Image &output);
 
 
 struct WarpContent{
+    static WarpContent instance;
+
+    WarpContent() : initialized(false) {}
+
+    bool initialized;
+
     int CALI_WIDTH;
     int CALI_HEIGHT;
     std::vector<float> d2nX;
@@ -47,19 +53,6 @@ struct WarpContent{
     float K3;
     float K4;
     float K5;
-
-    void fromConfigDirectory(){
-        //fromHeader();
-        //TODO hardcoded
-        //fromConfigFile(lms::Framework::configsDirectory+"/camera/cali.lconf"); //new car
-        fromConfigFile(lms::Framework::configsDirectory+"/camera/cali_cc15_auto.lconf"); //old car
-    }
-
-    void fromConfigFile(std::string pathToConfig){
-        lms::ModuleConfig mc;
-        mc.loadFromFile(pathToConfig);
-        fromConfig(&mc);
-    }
 
     void fromHeader(){
 #include "magic/cali_ab.h"

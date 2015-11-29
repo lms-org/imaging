@@ -7,19 +7,12 @@
 namespace lms {
 namespace imaging {
 
-//TODO Warum kann man die beiden nicht in die Header verschieben?
-WarpContent defaultContent;
-bool defaultSet = false;
-
-void setDefaultWarpContent(){
-    defaultSet = true;
-    defaultContent.fromConfigDirectory();
-
-}
-
 bool C2V(const lms::math::vertex2i* lp, lms::math::vertex2f* rp) {
-    if(!defaultSet){
-        setDefaultWarpContent();
+    WarpContent& defaultContent = WarpContent::instance;
+
+    if(! defaultContent.initialized){
+        std::cout << "WarpContent::instance not initialized. Please use warp_service."
+                     << std::endl;
     }
     double xtemp, ytemp;
 
@@ -49,8 +42,11 @@ bool C2V(const lms::math::vertex2i* lp, lms::math::vertex2f* rp) {
 }
 
 bool V2C(const lms::math::vertex2f* rp, lms::math::vertex2i* px) {
-    if(!defaultSet){
-        setDefaultWarpContent();
+    WarpContent& defaultContent = WarpContent::instance;
+
+    if(!defaultContent.initialized){
+        std::cout << "WarpContent::instance not initialized. Please use warp_service."
+                     << std::endl;
     }
     //Felix: Umrechnung der Autokoordinaten ins unverzerrte Bild
     float x = (float)rp->x;
@@ -77,8 +73,11 @@ int8_t rad_to_angle_lp(float r) {
 }
 
 bool n2d(const float & xn, const float & yn, float & xdist, float & ydist) {
-    if(!defaultSet){
-        setDefaultWarpContent();
+    WarpContent& defaultContent = WarpContent::instance;
+
+    if(!defaultContent.initialized){
+        std::cout << "WarpContent::instance not initialized. Please use warp_service."
+                     << std::endl;
     }
     const float xnorm =(float)(xn-defaultContent.Cx)/defaultContent.Fx, ynorm = (float)(yn-defaultContent.Cy)/defaultContent.Fy;
     float r2 = xnorm*xnorm + ynorm*ynorm;

@@ -2,7 +2,6 @@
 
 #include "lms/imaging/warp.h"
 #include "lms/type/module_config.h"
-#include "lms/framework.h"
 
 namespace lms {
 namespace imaging {

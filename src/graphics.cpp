@@ -57,6 +57,14 @@ void Graphics::drawRect(int x, int y, int width, int height) {
     drawVerticalLine(x + width, y, height);
 }
 
+void Graphics::fillRect(int x, int y, int width, int height) {
+    for(int i=0; i<width; i++) {
+        for(int j=0; j<height; j++) {
+            drawPixel(x+i, y+j);
+        }
+    }
+}
+
 void Graphics::drawPolyline(int *x, int *y, int n) {
     for(int i = 0; i < n - 1; i++) {
         drawLine(x[i], y[i], x[i+1], y[i+1]);

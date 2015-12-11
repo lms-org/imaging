@@ -90,6 +90,7 @@ public:
     virtual void drawLine(int x1, int y1, int x2, int y2);
 
     virtual void drawRect(int x, int y, int width, int height);
+    virtual void fillRect(int x, int y, int width, int height);
 
     virtual void drawPolyline(int *x, int *y, int n);
 

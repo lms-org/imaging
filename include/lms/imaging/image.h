@@ -15,8 +15,7 @@
 #endif
 
 #ifdef USE_OPENCV
-#include <opencv2/core/base.hpp>
-#include <opencv2/opencv.hpp> //not sure if we really need it
+#include <opencv2/core/core.hpp>
 #endif
 
 namespace lms {

@@ -32,8 +32,8 @@ target_link_libraries (imaging PRIVATE lmscore math_lib)
 
 
 if(USE_OPENCV)
-    #find_package( OpenCV REQUIRED )
-    #include_directories(${OpenCV_INCLUDE_DIRS} )
-    target_link_libraries(imaging PRIVATE opencv_binding)
-    message(STATUS "Use opencv extensions in imaging lib)#, opencv-libs: " ${OpenCV_LIBS})
+    find_package( OpenCV REQUIRED )
+    include_directories(${OpenCV_INCLUDE_DIRS} )
+    target_link_libraries(imaging PRIVATE ${OpenCV_LIBS})
+    message(STATUS "Enabling OpenCV extensions in imaging lib")
 endif()

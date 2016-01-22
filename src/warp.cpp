@@ -1,7 +1,7 @@
 #include <math.h>
 
 #include "lms/imaging/warp.h"
-#include "lms/type/module_config.h"
+#include "lms/config.h"
 
 namespace lms {
 namespace imaging {

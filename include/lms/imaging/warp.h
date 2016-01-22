@@ -7,7 +7,7 @@
 
 #include "lms/imaging/image.h"
 #include "lms/math/vertex.h"
-#include "lms/type/module_config.h"
+#include "lms/config.h"
 
 // DIRTY CODE -> DO NOT READ
 
@@ -116,7 +116,7 @@ struct WarpContent{
 
     }
 
-    void fromConfig(const lms::ModuleConfig *cali){
+    void fromConfig(const lms::Config *cali){
         CALI_WIDTH = cali->get<int>("col");
         CALI_HEIGHT = cali->get<int>("row");
         world2cam = cali->getArray<float>("world2cam");

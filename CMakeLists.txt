@@ -26,9 +26,23 @@ set (HEADERS
     "include/lms/imaging/magic/cali_ab.h"
 )
 
+set(OPTIONAL_LIBS "")
+
+# Check for PNG support
+find_package(PNG)
+if(PNG_FOUND)
+    message(STATUS "Enabling PNG support in imaging lib")
+    set(SOURCES ${SOURCES} "src/png.cpp")
+    set(HEADERS ${HEADERS} "include/lms/imaging/png.h")
+    add_definitions(${PNG_DEFINITIONS})
+    include_directories(${PNG_INCLUDE_DIRS})
+    set(OPTIONAL_LIBS ${OPTIONAL_LIBS} ${PNG_LIBRARIES})
+endif()
+
 include_directories("include")
 add_library (imaging SHARED ${SOURCES} ${HEADERS})
-target_link_libraries (imaging PRIVATE lmscore math_lib)
+target_link_libraries (imaging PRIVATE lmscore math_lib ${OPTIONAL_LIBS})
+
 
 
 if(USE_OPENCV)

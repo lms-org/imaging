@@ -27,7 +27,7 @@ int8_t rad_to_angle_lp(float);
 bool n2d(const float & xn, const float & yn, float & xdist, float & ydist);
 
 void imageV2C(const Image &input, Image &output);
-
+void imageD2N(const Image &input, Image &output);
 
 struct WarpContent{
     static WarpContent instance;

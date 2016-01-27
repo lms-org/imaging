@@ -133,5 +133,25 @@ void imageV2C(const Image &input, Image &output) {
     //return true;
 }
 
+void imageD2N(const Image &input, Image &output) {
+    output.resize(input.width(), input.height(), Format::GREY);
+
+    for(int y = 0; y < input.height(); y++) {
+        for(int x = 0; x < input.width(); x++) {
+            float xn = static_cast<float>(x);
+            float yn = static_cast<float>(y);
+            float xd, yd;
+
+            auto success = n2d(xn, yn, xd, yd);
+            uint8_t color = 0;
+            if(success && xd >= 0 && xd < input.width()
+               && yd >= 0 && yd < input.height()) {
+                color = *(input.data() + static_cast<uint16_t>(yd) * input.width() + static_cast<uint16_t>(xd));
+            }
+            *(output.data() + y * output.width() + x) = color;
+        }
+    }
+}
+
 }  // namespace imaging
 }  // namespace lms

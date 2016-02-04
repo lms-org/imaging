@@ -52,6 +52,11 @@ bool V2C(const lms::math::vertex2f* rp, lms::math::vertex2i* px) {
     //Felix: Umrechnung der Autokoordinaten ins unverzerrte Bild
     float x = (float)rp->x;
     float y = (float)rp->y;
+    //TODO neu eingebaute limitierung, negative x-werte ergeben (0,0)
+    if(x < 0 || x > 4)
+        return false;
+    if(y < -3 || y > 3)
+        return false;
     float a = x * defaultContent.world2cam[0] + y * defaultContent.world2cam[1] + defaultContent.world2cam[2];
     float b = x * defaultContent.world2cam[3] + y * defaultContent.world2cam[4] + defaultContent.world2cam[5];
     float c = x * defaultContent.world2cam[6] + y * defaultContent.world2cam[7] + defaultContent.world2cam[8];

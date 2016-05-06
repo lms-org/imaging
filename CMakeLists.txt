@@ -21,7 +21,7 @@ set (HEADERS
 
 include_directories("include")
 add_library (imaging SHARED ${SOURCES} ${HEADERS})
-target_link_libraries (imaging PRIVATE lmscore)
+target_link_libraries (imaging PRIVATE lmscore math_lib)
 
 
 if(USE_OPENCV)

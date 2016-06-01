@@ -1,0 +1,6 @@
+{
+"name": "imaging",
+"dependencies":["math_lib","lms"],
+"description":"Handles images TODO",
+"includes":["include"]
+}

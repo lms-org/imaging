@@ -19,6 +19,11 @@ set (HEADERS
     "include/lms/imaging/draw_debug.h"
 )
 
+#set compiler flags
+if((${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang") OR (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU"))
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -Wreturn-type -Wpedantic ")
+endif()
+
 include_directories("include")
 add_library (imaging SHARED ${SOURCES} ${HEADERS})
 target_link_libraries (imaging PRIVATE lmscore math_lib)

@@ -6,6 +6,7 @@ set ( SOURCES
     "src/pnm.cpp"
     "src/image_factory.cpp"
     "src/graphics.cpp"
+    "src/transform_image.cpp"
 )
 
 set (HEADERS
@@ -17,6 +18,7 @@ set (HEADERS
     "include/lms/imaging/image_factory.h"
     "include/lms/imaging/graphics.h"
     "include/lms/imaging/draw_debug.h"
+    "include/lms/imaging/transform_image.h"
 )
 
 #set compiler flags

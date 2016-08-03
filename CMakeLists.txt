@@ -1,6 +1,5 @@
 set ( SOURCES
     "src/image.cpp"
-    "src/static_image.cpp"
     "src/format.cpp"
     "src/converter.cpp"
     "src/pnm.cpp"

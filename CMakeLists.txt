@@ -1,3 +1,8 @@
+cmake_minimum_required(VERSION 2.8.12)
+
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+conan_basic_setup()
+
 set ( SOURCES
     "src/image.cpp"
     "src/format.cpp"
@@ -26,8 +31,11 @@ if((${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang") OR (${CMAKE_CXX_COMPILER_ID} STRE
 endif()
 
 include_directories("include")
+
 add_library (imaging SHARED ${SOURCES} ${HEADERS})
-target_link_libraries (imaging PRIVATE lmscore math_lib)
+
+target_link_libraries(imaging ${CONAN_LIBS})
+#target_link_libraries (imaging PRIVATE lmscore math_lib)
 
 
 if(USE_OPENCV)

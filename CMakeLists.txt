@@ -32,9 +32,9 @@ endif()
 
 include_directories("include")
 
-add_library (imaging SHARED ${SOURCES} ${HEADERS})
+add_library (lms_imaging SHARED ${SOURCES} ${HEADERS})
 
-target_link_libraries(imaging ${CONAN_LIBS})
+target_link_libraries(lms_imaging ${CONAN_LIBS})
 #target_link_libraries (imaging PRIVATE lmscore math_lib)
 
 

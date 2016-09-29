@@ -41,6 +41,6 @@ target_link_libraries(lms_imaging ${CONAN_LIBS})
 if(USE_OPENCV)#TODO opencv flag in conan file
     find_package( OpenCV REQUIRED )
     include_directories(${OpenCV_INCLUDE_DIRS} )
-    target_link_libraries(imaging PRIVATE ${OpenCV_LIBS})
+    target_link_libraries(lms_imaging PRIVATE ${OpenCV_LIBS})
     message(STATUS "Enabling OpenCV extensions in imaging lib")
 endif()

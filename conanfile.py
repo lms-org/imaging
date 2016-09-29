@@ -1,7 +1,7 @@
 from conans import ConanFile, CMake
 
 class ImagingConan(ConanFile):
-    name = "imaging"
+    name = "lms_imaging"
     version = "1.0"
     settings = "os", "compiler", "build_type", "arch"
     exports = "*"
@@ -14,7 +14,7 @@ class ImagingConan(ConanFile):
         self.run("cmake --build . %s" % cmake.build_config)
 
     def package(self):
-        self.copy("*.h", dst="include")
+        self.copy("*.h", dst="include",src="include")
         self.copy("*.lib", dst="lib", src="lib")
         self.copy("*.a", dst="lib", src="lib")
 

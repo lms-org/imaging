@@ -38,7 +38,7 @@ target_link_libraries(imaging ${CONAN_LIBS})
 #target_link_libraries (imaging PRIVATE lmscore math_lib)
 
 
-if(USE_OPENCV)
+if(USE_OPENCV)#TODO opencv flag in conan file
     find_package( OpenCV REQUIRED )
     include_directories(${OpenCV_INCLUDE_DIRS} )
     target_link_libraries(imaging PRIVATE ${OpenCV_LIBS})

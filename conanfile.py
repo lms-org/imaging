@@ -5,7 +5,7 @@ class ImagingConan(ConanFile):
     version = "1.0"
     settings = "os", "compiler", "build_type", "arch"
     exports = "*"
-    requires = "math/1.0@demo/math2"
+    requires = "lms_math/1.0@lms/master"
     generators = "cmake"
 
     def build(self):

@@ -8,6 +8,9 @@
 
 #include "lms/imaging/format.h"
 
+#define USE_CEREAL
+//#define USE_OPENCV
+
 #ifdef USE_CEREAL
 #include "lms/serializable.h"
 #include "cereal/cerealizable.h"

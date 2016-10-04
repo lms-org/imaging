@@ -5,7 +5,7 @@ class ImagingConan(ConanFile):
     version = "1.0"
     settings = "os", "compiler", "build_type", "arch"
     exports = "*"
-    requires = "lms_math/1.0@lms/stable"
+    requires = "lms_math/1.0@lms/stable","cereal/1.2-0@lms/stable"#,"opencv/3.1.0-1@lasote/vcpkg"
     generators = "cmake"
 
     def build(self):

@@ -1,7 +1,9 @@
+if(USE_CONAN)
 cmake_minimum_required(VERSION 2.8.12)
 
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
+endif(USE_CONAN)
 
 set ( SOURCES
     "src/image.cpp"
@@ -34,13 +36,15 @@ include_directories("include")
 
 add_library (lms_imaging SHARED ${SOURCES} ${HEADERS})
 
+if(USE_CONAN)
 target_link_libraries(lms_imaging ${CONAN_LIBS})
-#target_link_libraries (imaging PRIVATE lmscore math_lib)
+else()
+target_link_libraries (lms_imaging PRIVATE lmscore math_lib)
+endif(USE_CONAN)
 
-
-if(USE_OPENCV)#TODO opencv flag in conan file
-    find_package( OpenCV REQUIRED )
-    include_directories(${OpenCV_INCLUDE_DIRS} )
-    target_link_libraries(lms_imaging PRIVATE ${OpenCV_LIBS})
-    message(STATUS "Enabling OpenCV extensions in imaging lib")
-endif()
+#if(USE_OPENCV)#TODO opencv flag in conan file
+#    find_package( OpenCV REQUIRED )
+#    include_directories(${OpenCV_INCLUDE_DIRS} )
+#    target_link_libraries(lms_imaging PRIVATE ${OpenCV_LIBS})
+#    message(STATUS "Enabling OpenCV extensions in imaging lib")
+#endif()

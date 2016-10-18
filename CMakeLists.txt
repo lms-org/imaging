@@ -39,7 +39,7 @@ add_library (lms_imaging SHARED ${SOURCES} ${HEADERS})
 if(USE_CONAN)
 target_link_libraries(lms_imaging ${CONAN_LIBS})
 else()
-target_link_libraries (lms_imaging PRIVATE lmscore math_lib)
+target_link_libraries (lms_imaging PRIVATE lmscore lms_math)
 endif(USE_CONAN)
 
 #if(USE_OPENCV)#TODO opencv flag in conan file

@@ -15,6 +15,12 @@ struct ARGBColor {
     ARGBColor(std::uint32_t value);
     ARGBColor();
 
+
+    std::uint8_t alpha() const;
+    std::uint8_t red() const;
+    std::uint8_t green() const;
+    std::uint8_t blue() const;
+
     std::uint32_t value;
 };
 

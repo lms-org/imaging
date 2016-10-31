@@ -12,6 +12,19 @@ ARGBColor::ARGBColor(std::uint8_t red, std::uint8_t green, std::uint8_t blue) :
 ARGBColor::ARGBColor(std::uint32_t value) : value(value) {}
 ARGBColor::ARGBColor() : value(0x00000000) {}
 
+std::uint8_t ARGBColor::alpha() const{
+    return (value>>24)&0xff;
+}
+std::uint8_t ARGBColor::red() const{
+    return (value >>16)&0xff;
+}
+std::uint8_t ARGBColor::green() const{
+    return (value >> 8 )&0xff;
+}
+std::uint8_t ARGBColor::blue() const{
+    return value & 0xff;
+}
+
 /**
  * Helper function that is used to draw horizontal and vertical
  * lines.

@@ -65,6 +65,18 @@ void Graphics::fillRect(int x, int y, int width, int height) {
     }
 }
 
+
+void Graphics::fillTriangle(int x1, int y1, int x2,int y2,int x3, int y3){
+    //TODO
+    drawTriangle(x1, y1, x2, y2, x3,y3);
+}
+
+void Graphics::drawTriangle(int x1, int y1, int x2,int y2,int x3, int y3){
+    drawLine(x1,y1,x2,y2);
+    drawLine(x1,y1,x3,y3);
+    drawLine(x2,y2,x3,y3);
+}
+
 void Graphics::drawPolyline(int *x, int *y, int n) {
     for(int i = 0; i < n - 1; i++) {
         drawLine(x[i], y[i], x[i+1], y[i+1]);

@@ -91,6 +91,8 @@ public:
 
     virtual void drawRect(int x, int y, int width, int height);
     virtual void fillRect(int x, int y, int width, int height);
+    virtual void fillTriangle(int x1, int y1, int x2,int y2,int x3, int y3);
+    virtual void drawTriangle(int x1, int y1, int x2,int y2,int x3, int y3);
 
     virtual void drawPolyline(int *x, int *y, int n);
 
